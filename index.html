@@ -152,6 +152,58 @@ textarea:focus{outline:none;border-color:rgba(197,165,90,0.25);}
 .pts-floating{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:4rem;color:#FFD700;font-weight:700;font-family:Georgia,serif;z-index:2000;pointer-events:none;text-shadow:0 0 40px rgba(255,215,0,0.6);animation:ptsFloat 1.6s ease-out both;}
 @keyframes ptsFloat{0%{opacity:0;transform:translate(-50%,-50%) scale(0.3);}30%{opacity:1;transform:translate(-50%,-50%) scale(1.2);}70%{opacity:1;transform:translate(-50%,-70%) scale(1);}100%{opacity:0;transform:translate(-50%,-120%) scale(0.9);}}
 
+/* BOLITA FLOTANTE DE PUNTOS */
+.pts-bubble{position:fixed;top:14px;right:14px;z-index:998;display:none;align-items:center;gap:10px;padding:9px 14px 9px 11px;background:linear-gradient(135deg,#C5A55A,#D4B96E);color:#1a1a1a;border:none;border-radius:99px;font-family:Georgia,serif;font-weight:700;font-size:0.78rem;letter-spacing:0.02em;box-shadow:0 6px 22px rgba(197,165,90,0.5),0 2px 6px rgba(0,0,0,0.5);cursor:pointer;animation:bubblePulse 2.4s ease-in-out infinite;text-decoration:none;}
+.pts-bubble.show{display:inline-flex;}
+.pts-bubble .pb-icon{width:30px;height:30px;border-radius:50%;background:#1a1a1a;color:#C5A55A;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+.pts-bubble .pb-col{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05;}
+.pts-bubble .pb-lbl{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;opacity:0.7;font-weight:600;font-family:Arial,sans-serif;}
+.pts-bubble .pb-num{font-size:0.95rem;font-weight:800;}
+.pts-bubble .pb-msg{font-size:0.65rem;opacity:0.75;margin-left:6px;font-family:Arial,sans-serif;font-weight:600;letter-spacing:0.04em;max-width:90px;line-height:1.15;}
+.pts-bubble .pb-badge{position:absolute;top:-4px;right:-4px;background:#8B0000;color:#fff;font-size:0.55rem;font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:0.5px;font-family:Arial,sans-serif;}
+@keyframes bubblePulse{0%,100%{transform:scale(1);box-shadow:0 6px 22px rgba(197,165,90,0.5),0 2px 6px rgba(0,0,0,0.5);}50%{transform:scale(1.05);box-shadow:0 8px 30px rgba(197,165,90,0.75),0 2px 6px rgba(0,0,0,0.5);}}
+@media (max-width:380px){.pts-bubble .pb-msg{display:none;}}
+
+/* PREMIOS / REWARDS */
+.pv-rewards-head{text-align:center;margin-bottom:18px;}
+.pv-rewards-head h3{font-family:Georgia,serif;font-size:1.6rem;color:#C5A55A;font-weight:400;margin-bottom:4px;}
+.pv-rewards-head p{font-size:0.78rem;color:rgba(224,208,192,0.5);font-family:Arial,sans-serif;}
+.pv-rewards-head p b{color:#fff;}
+.pv-reward-card{background:#0f0f0f;border:1px solid #1c1c1c;border-radius:18px;padding:18px 20px;margin-bottom:12px;position:relative;transition:all 0.3s;}
+.pv-reward-card.ready{border-color:rgba(197,165,90,0.45);box-shadow:0 0 24px rgba(197,165,90,0.12);}
+.pv-rew-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.pv-rew-left{flex:1;min-width:0;}
+.pv-rew-name{display:flex;align-items:center;gap:10px;font-family:Georgia,serif;font-size:1.05rem;font-weight:700;line-height:1.2;color:#F5E6D3;}
+.pv-rew-lock{width:16px;height:16px;flex:0 0 16px;color:rgba(245,230,211,0.4);}
+.pv-reward-card.ready .pv-rew-lock{display:none;}
+.pv-rew-desc{margin:6px 0 0;color:rgba(224,208,192,0.5);font-size:0.78rem;line-height:1.4;font-family:Arial,sans-serif;}
+.pv-rew-cost{text-align:right;flex:0 0 auto;}
+.pv-rew-cost .pv-rew-num{font-family:Georgia,serif;font-size:1.5rem;font-weight:700;line-height:1;color:#F5E6D3;}
+.pv-rew-cost .pv-rew-lbl{display:block;color:rgba(224,208,192,0.5);font-size:0.6rem;letter-spacing:0.18em;margin-top:3px;font-weight:600;font-family:Arial,sans-serif;}
+.pv-reward-card.ready .pv-rew-num{color:#C5A55A;}
+.pv-rew-progress-wrap{margin-top:14px;}
+.pv-rew-progress-text{color:rgba(224,208,192,0.5);font-size:0.7rem;margin-bottom:6px;font-family:Arial,sans-serif;}
+.pv-rew-progress-text.ready{color:#3FA767;font-weight:600;}
+.pv-rew-progress-bar{height:6px;background:#222;border-radius:99px;overflow:hidden;}
+.pv-rew-progress-fill{height:100%;background:linear-gradient(90deg,#2a7a4d,#3FA767);border-radius:99px;transition:width 0.6s ease;}
+.pv-reward-card.ready .pv-rew-progress-fill{background:linear-gradient(90deg,#C5A55A,#D4B96E);}
+.pv-rew-redeem-btn{margin-top:12px;width:100%;padding:12px;border-radius:99px;border:none;background:linear-gradient(135deg,#C5A55A,#D4B96E);color:#1a1a1a;font-weight:700;font-size:0.82rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;display:none;font-family:Georgia,serif;}
+.pv-reward-card.ready .pv-rew-redeem-btn{display:block;}
+.pv-rew-redeem-btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(197,165,90,0.3);}
+
+.pv-reset-banner{background:linear-gradient(135deg,#8B0000,#5a0000);border-radius:14px;padding:14px 16px;margin-bottom:16px;font-size:0.78rem;line-height:1.5;color:#fff;font-family:Arial,sans-serif;}
+.pv-reset-banner b{color:#C5A55A;}
+
+/* MODAL CANJE */
+.pv-redeem-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:1100;align-items:center;justify-content:center;padding:20px;}
+.pv-redeem-modal.show{display:flex;animation:fadeUp 0.3s both;}
+.pv-redeem-inner{background:#0f0f0f;border:1px solid rgba(197,165,90,0.5);border-radius:20px;padding:30px 24px;text-align:center;max-width:340px;width:100%;}
+.pv-redeem-inner h2{font-family:Georgia,serif;font-size:1.4rem;color:#C5A55A;margin-bottom:6px;font-weight:400;}
+.pv-redeem-inner .pv-rd-rew{font-size:0.85rem;color:rgba(224,208,192,0.7);font-family:Arial,sans-serif;}
+.pv-redeem-inner .pv-rd-code{font-family:'Courier New',monospace;font-size:2rem;font-weight:700;letter-spacing:8px;background:linear-gradient(135deg,#C5A55A,#D4B96E);color:#000;padding:18px;border-radius:14px;margin:18px 0 8px;}
+.pv-redeem-inner .pv-rd-info{color:rgba(224,208,192,0.55);font-size:0.72rem;font-family:Arial,sans-serif;line-height:1.5;}
+.pv-redeem-inner .pv-rd-close{margin-top:18px;padding:10px 30px;border-radius:99px;border:none;background:#fff;color:#000;font-weight:700;font-family:Georgia,serif;cursor:pointer;letter-spacing:0.06em;}
+
 /* WA */
 .wa{position:fixed;bottom:22px;right:22px;z-index:999;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#25D366,#128C7E);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(37,211,102,0.35);text-decoration:none;transition:all 0.3s;animation:waIn 0.8s 0.5s both;}
 .wa:hover{transform:scale(1.1) translateY(-3px);}
@@ -427,8 +479,22 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
         </div>
       </div>
       <button class="pts-btn" id="pv-accum-btn">Acumular puntos de esta visita</button>
+      <button class="pts-btn secondary" id="pv-rewards-btn" style="margin-top:10px;">🎁 Ver mis premios</button>
       <button class="pts-btn secondary" id="pv-logout-btn" style="margin-top:10px;">Cerrar sesión</button>
       <div class="pts-ok" id="pv-dash-msg"></div>
+    </div>
+
+    <!-- Vista: Premios -->
+    <div class="pts-view" id="pv-rewards">
+      <div class="pv-rewards-head">
+        <h3>Premios</h3>
+        <p>Tienes <b id="pv-rew-pts">0</b> pts</p>
+      </div>
+      <div class="pv-reset-banner" id="pv-reset-banner" style="display:none;">
+        🎉 ¡Llegaste a <b>2000 pts</b>! Canjea tu <b>consumo de $100</b>. Al canjearlo, tus puntos vuelven a 0 para empezar un nuevo ciclo.
+      </div>
+      <div id="pv-rewards-list"></div>
+      <button class="pts-btn secondary" id="pv-rewards-back" style="margin-top:14px;">Volver</button>
     </div>
 
     <!-- Vista: Acumular (OTP mesero) -->
@@ -504,6 +570,28 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
 <div class="thx" id="thx">&#10024; ¡Gracias por tu opinión! &#10024;</div>
 <div id="sendErr" style="display:none;color:#CD5C5C;margin-top:12px;font-size:0.85rem;"></div>
 </div></div>
+
+<!-- BOLITA FLOTANTE DE PUNTOS -->
+<a href="javascript:void(0);" class="pts-bubble" id="pts-bubble" aria-label="Mis puntos">
+  <div class="pb-icon">🎁</div>
+  <div class="pb-col">
+    <span class="pb-lbl">Mis pts</span>
+    <span class="pb-num" id="pb-num">0</span>
+  </div>
+  <span class="pb-msg">Gana premios por puntos</span>
+  <span class="pb-badge" id="pb-badge" style="display:none;">¡LISTO!</span>
+</a>
+
+<!-- MODAL CANJE EXITOSO -->
+<div class="pv-redeem-modal" id="pv-redeem-modal">
+  <div class="pv-redeem-inner">
+    <h2 id="pv-rd-title">¡Canjeado!</h2>
+    <div class="pv-rd-rew" id="pv-rd-rew">Recompensa</div>
+    <div class="pv-rd-code" id="pv-rd-code">XXXXXX</div>
+    <div class="pv-rd-info" id="pv-rd-info">Muestra este código al mesero. Válido por 24 horas.</div>
+    <button class="pv-rd-close" id="pv-rd-close">Listo</button>
+  </div>
+</div>
 
 <!-- WA -->
 <a href="https://wa.me/593981329458?text=Hola%20Restful%20Restobar%2C%20quisiera%20hacer%20una%20reserva" class="wa" target="_blank"><div class="wa-r"></div><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
@@ -730,10 +818,122 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
   }
 
   function showView(v){
-    ['pv-geo','pv-login','pv-register','pv-dash','pv-accum'].forEach(function(id){
+    ['pv-geo','pv-login','pv-register','pv-dash','pv-accum','pv-rewards'].forEach(function(id){
       var el=$(id); if(el) el.classList.remove('show');
     });
     var t=$('pv-'+v); if(t) t.classList.add('show');
+  }
+
+  // ============ BOLITA FLOTANTE ============
+  function refreshBubble(){
+    var b = $('pts-bubble'); if(!b) return;
+    var s = S.get();
+    if (s && s.cliente && S.valid()){
+      var pts = Number(s.cliente.puntos_actuales)||0;
+      $('pb-num').textContent = pts;
+      b.classList.add('show');
+      var badge = $('pb-badge');
+      if (pts >= 2000){
+        badge.textContent = '$100';
+        badge.style.background = '#3FA767';
+        badge.style.display = 'inline-block';
+      } else if (pts >= 200){
+        badge.textContent = '¡LISTO!';
+        badge.style.background = '#8B0000';
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    } else {
+      b.classList.remove('show');
+    }
+  }
+
+  // ============ PREMIOS ============
+  function lockSVG(){
+    return '<svg class="pv-rew-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+  }
+
+  function renderRewardCard(r, myPts){
+    var cost = Number(r.costo_pts);
+    var ready = myPts >= cost;
+    var remaining = Math.max(0, cost - myPts);
+    var pct = Math.min(100, Math.round((myPts / cost) * 100));
+    var safeName = String(r.nombre||'').replace(/'/g,"\\'");
+    return '<div class="pv-reward-card '+(ready?'ready':'')+'" data-id="'+r.id+'">' +
+      '<div class="pv-rew-top">' +
+        '<div class="pv-rew-left">' +
+          '<div class="pv-rew-name">'+(ready?'':lockSVG())+'<span>'+r.nombre+'</span></div>' +
+          '<p class="pv-rew-desc">'+(r.descripcion||'')+'</p>' +
+        '</div>' +
+        '<div class="pv-rew-cost">' +
+          '<span class="pv-rew-num">'+cost+'</span>' +
+          '<span class="pv-rew-lbl">PTS</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="pv-rew-progress-wrap">' +
+        '<div class="pv-rew-progress-text '+(ready?'ready':'')+'">' +
+          (ready?'✓ Listo para canjear':'Te faltan '+remaining+' pts') +
+        '</div>' +
+        '<div class="pv-rew-progress-bar"><div class="pv-rew-progress-fill" style="width:'+pct+'%"></div></div>' +
+      '</div>' +
+      '<button class="pv-rew-redeem-btn" data-redeem="'+r.id+'" data-name="'+safeName+'">Canjear</button>' +
+    '</div>';
+  }
+
+  function loadRewards(){
+    var s = S.get(); if(!s||!s.cliente) return;
+    var tel = s.cliente.telefono;
+    api('getClient', { telefono: tel }).then(function(cli){
+      if (cli.ok){
+        s.cliente = cli.cliente;
+        S.set({ cliente: cli.cliente, t: Date.now() });
+        refreshBubble();
+      }
+      var myPts = Number((s.cliente && s.cliente.puntos_actuales) || 0);
+      $('pv-rew-pts').textContent = myPts;
+      $('pv-reset-banner').style.display = myPts >= 2000 ? 'block' : 'none';
+
+      api('getRewards', { telefono: tel }).then(function(r){
+        var list = (r.rewards||[]).sort(function(a,b){ return Number(a.costo_pts)-Number(b.costo_pts); });
+        if (!list.length) {
+          $('pv-rewards-list').innerHTML = '<div style="text-align:center;color:rgba(224,208,192,0.4);padding:30px;">No hay premios disponibles ahora.</div>';
+          return;
+        }
+        $('pv-rewards-list').innerHTML = list.map(function(rw){ return renderRewardCard(rw, myPts); }).join('');
+      });
+    });
+  }
+
+  function doRedeem(rewardId, nombre){
+    if (!confirm('¿Canjear "'+nombre+'"? Se descontarán los puntos.')) return;
+    var s = S.get(); if(!s||!s.cliente) return;
+    var idemKey = 'redeem_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    api('redeemReward', {
+      telefono: s.cliente.telefono,
+      recompensa_id: rewardId,
+      idempotency_key: idemKey
+    }).then(function(r){
+      if (!r.ok){ alert(r.error || 'Error al canjear'); return; }
+      // Actualizar sesión local
+      s.cliente.puntos_actuales = r.puntos_restantes;
+      S.set({ cliente: s.cliente, t: Date.now() });
+      refreshBubble();
+
+      // Mostrar modal éxito
+      $('pv-rd-title').textContent = r.fue_reset ? '🎁 ¡Premio máximo!' : '✓ ¡Canjeado!';
+      $('pv-rd-rew').textContent = r.recompensa || '';
+      $('pv-rd-code').textContent = r.codigo;
+      $('pv-rd-info').textContent = r.fue_reset
+        ? '¡Felicidades! Disfruta tu consumo de $100. Tus puntos vuelven a 0 para un nuevo ciclo. Muestra este código al mesero.'
+        : 'Muestra este código al mesero. Válido por 24 horas.';
+      $('pv-redeem-modal').classList.add('show');
+
+      // Refrescar lista
+      loadRewards();
+      // Refrescar dashboard si vuelve
+      renderDash(s.cliente);
+    });
   }
 
   // ============ GEOLOCALIZACIÓN ============
@@ -833,6 +1033,7 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     S.set({ cliente: cliente, t: Date.now() });
     showView('dash');
     renderDash(cliente);
+    refreshBubble();
   }
 
   // Cargar config pública
@@ -912,7 +1113,36 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
   $('modal-terms').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('show'); });
 
   // Logout
-  $('pv-logout-btn').addEventListener('click', function(){ S.clear(); showView('login'); });
+  $('pv-logout-btn').addEventListener('click', function(){ S.clear(); showView('login'); refreshBubble(); });
+
+  // Mis Premios
+  $('pv-rewards-btn').addEventListener('click', function(){ showView('rewards'); loadRewards(); });
+  $('pv-rewards-back').addEventListener('click', function(){ showView('dash'); var s=S.get(); if(s&&s.cliente) renderDash(s.cliente); });
+
+  // Bolita → ir a sección puntos / vista premios
+  $('pts-bubble').addEventListener('click', function(){
+    var btn = document.querySelector('nav button[data-s="puntos"]');
+    if (btn) btn.click();
+    // Si ya está logueado, abrir directo premios
+    setTimeout(function(){
+      if (geoOk && S.valid()){
+        showView('rewards');
+        loadRewards();
+      }
+    }, 200);
+  });
+
+  // Click en botón canjear (delegado)
+  document.addEventListener('click', function(e){
+    var t = e.target;
+    if (t && t.classList && t.classList.contains('pv-rew-redeem-btn')){
+      doRedeem(t.getAttribute('data-redeem'), t.getAttribute('data-name'));
+    }
+  });
+
+  // Cerrar modal canje
+  $('pv-rd-close').addEventListener('click', function(){ $('pv-redeem-modal').classList.remove('show'); });
+  $('pv-redeem-modal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('show'); });
 
   // Ir a vista acumular
   $('pv-accum-btn').addEventListener('click', function(){
@@ -975,6 +1205,7 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
         S.set({ cliente:c, t: Date.now() });
         showView('dash');
         renderDash(c);
+        refreshBubble();
         $('pv-dash-msg').textContent = '✅ ¡'+r.puntos_ganados+' puntos acreditados!';
       } else {
         err.textContent = r.error || 'Error';
@@ -986,6 +1217,8 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
   });
 
   loadConfig();
+  // Mostrar bolita si ya hay sesión válida
+  refreshBubble();
 })();
 </script>
 </body>
