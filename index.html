@@ -1207,9 +1207,11 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
       if (!r.ok && r.error && (r.error.indexOf('registrarte')!==-1 || r.error.indexOf('no encontrado')!==-1)){
         S.clear();
         refreshBubble();
-        err.innerHTML = 'Tu sesión es inválida. <a href="javascript:void(0);" id="pv-relogin" style="color:#C5A55A;text-decoration:underline;">Inicia sesión de nuevo</a>';
+        err.innerHTML = 'Tu sesión expiró. <a href="javascript:void(0);" id="pv-relogin" style="color:#C5A55A;text-decoration:underline;">Volver a iniciar sesión</a> o <a href="javascript:void(0);" id="pv-rereg" style="color:#C5A55A;text-decoration:underline;">registrarse</a>';
         var rl = document.getElementById('pv-relogin');
         if (rl) rl.addEventListener('click', function(){ showView('login'); });
+        var rr = document.getElementById('pv-rereg');
+        if (rr) rr.addEventListener('click', function(){ showView('register'); });
         return;
       }
       if (r.ok) {
