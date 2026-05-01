@@ -830,37 +830,33 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
   // ============ BOLITA FLOTANTE ============
   function refreshBubble(){
     var b = $('pts-bubble'); if(!b) return;
-    // Solo ocultar mientras está el splash; en cualquier otro estado la mostramos
-    var splash = document.getElementById('splash');
-    var splashVisible = splash && getComputedStyle(splash).display !== 'none' && !splash.classList.contains('gone');
-    if (splashVisible){ b.classList.remove('show'); return; }
-
     var s = S.get();
     var lbl = $('pb-lbl'), num = $('pb-num'), badge = $('pb-badge');
 
     if (s && s.cliente && S.valid()){
-      // Logueado → mostrar puntos
       var pts = Number(s.cliente.puntos_actuales)||0;
       lbl.textContent = 'Mis puntos';
       num.textContent = pts + ' pts';
       if (pts >= 2000){
-        badge.textContent = '$100';
-        badge.style.background = '#3FA767';
-        badge.style.display = 'inline-block';
+        badge.textContent = '$100'; badge.style.background = '#3FA767'; badge.style.display = 'inline-block';
       } else if (pts >= 200){
-        badge.textContent = '¡LISTO!';
-        badge.style.background = '#8B0000';
-        badge.style.display = 'inline-block';
-      } else {
-        badge.style.display = 'none';
-      }
+        badge.textContent = '¡LISTO!'; badge.style.background = '#8B0000'; badge.style.display = 'inline-block';
+      } else { badge.style.display = 'none'; }
     } else {
-      // No logueado → invitación
       lbl.textContent = 'Gana premios';
       num.textContent = 'Iniciar';
       badge.style.display = 'none';
     }
     b.classList.add('show');
+  }
+
+  // Ocultar/mostrar bolita según splash
+  function setBubbleVisibility(){
+    var b = $('pts-bubble'); if(!b) return;
+    var splash = document.getElementById('splash');
+    var splashHidden = !splash || splash.style.display==='none' || splash.classList.contains('gone');
+    if (splashHidden) refreshBubble();
+    else b.classList.remove('show');
   }
 
   // ============ PREMIOS ============
@@ -1203,6 +1199,15 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     var btn=this;
     api('accumulate', { telefono: s.cliente.telefono, password: pwd }).then(function(r){
       btn.disabled=false; btn.textContent='Validar y acreditar';
+      // Sesión corrupta: cliente borrado del Sheet o teléfono mal grabado
+      if (!r.ok && r.error && (r.error.indexOf('registrarte')!==-1 || r.error.indexOf('no encontrado')!==-1)){
+        S.clear();
+        refreshBubble();
+        err.innerHTML = 'Tu sesión es inválida. <a href="javascript:void(0);" id="pv-relogin" style="color:#C5A55A;text-decoration:underline;">Inicia sesión de nuevo</a>';
+        var rl = document.getElementById('pv-relogin');
+        if (rl) rl.addEventListener('click', function(){ showView('login'); });
+        return;
+      }
       if (r.ok) {
         // Animación +pts
         var f=document.createElement('div');
@@ -1231,10 +1236,21 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
   });
 
   loadConfig();
-  // Mostrar bolita
-  refreshBubble();
-  // Cuando se cierra el splash, refrescar la bolita
-  window.addEventListener('rfb-splash-closed', refreshBubble);
+  // Mostrar bolita inmediatamente si el splash ya está oculto
+  setBubbleVisibility();
+  // Cuando se cierra el splash, mostrar la bolita
+  window.addEventListener('rfb-splash-closed', setBubbleVisibility);
+  // Polling defensivo: chequear cada 500ms hasta que el splash desaparezca (max 12s)
+  var bubbleTries = 0;
+  var bubbleInterval = setInterval(function(){
+    bubbleTries++;
+    var splash = document.getElementById('splash');
+    if (!splash || splash.style.display==='none' || splash.classList.contains('gone')){
+      setBubbleVisibility();
+      clearInterval(bubbleInterval);
+    }
+    if (bubbleTries > 24) clearInterval(bubbleInterval);
+  }, 500);
 })();
 </script>
 </body>
