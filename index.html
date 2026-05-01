@@ -624,6 +624,13 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
   </div>
   <span class="pb-badge" id="pb-badge" style="display:none;">¡LISTO!</span>
 </a>
+<script>
+  // Mover bolita a body para que no la afecte el opacity:0 de #main
+  (function(){
+    var b = document.getElementById('pts-bubble');
+    if (b && b.parentElement !== document.body) document.body.appendChild(b);
+  })();
+</script>
 
 <!-- MODAL CANJE EXITOSO -->
 <div class="pv-redeem-modal" id="pv-redeem-modal">
