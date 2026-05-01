@@ -162,6 +162,34 @@ textarea:focus{outline:none;border-color:rgba(197,165,90,0.25);}
 .pts-bubble .pb-badge{position:absolute;top:-5px;right:-5px;background:#8B0000;color:#fff;font-size:0.55rem;font-weight:800;padding:2px 7px;border-radius:99px;letter-spacing:0.5px;font-family:Arial,sans-serif;}
 @keyframes bubblePulse{0%,100%{transform:scale(1);box-shadow:0 6px 22px rgba(197,165,90,0.5),0 2px 6px rgba(0,0,0,0.5);}50%{transform:scale(1.06);box-shadow:0 8px 30px rgba(197,165,90,0.8),0 2px 6px rgba(0,0,0,0.5);}}
 
+/* PROGRESO EN DASHBOARD */
+.pv-progress{margin-top:18px;background:linear-gradient(135deg,rgba(197,165,90,0.06),rgba(255,255,255,0.02));border:1px solid rgba(197,165,90,0.15);border-radius:18px;padding:18px 18px 16px;}
+.pv-progress-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.pv-progress-head .pv-prog-title{color:rgba(245,230,211,0.9);font-size:0.78rem;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;font-weight:700;}
+.pv-progress-head .pv-prog-link{color:#C5A55A;font-size:0.72rem;cursor:pointer;text-decoration:underline;font-family:Arial,sans-serif;opacity:0.85;}
+.pv-progress-head .pv-prog-link:hover{opacity:1;}
+.pv-next{margin-bottom:14px;}
+.pv-next-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px;}
+.pv-next-name{font-family:Georgia,serif;font-size:1rem;color:#F5E6D3;font-weight:700;}
+.pv-next-cost{font-family:Georgia,serif;font-size:1rem;color:#C5A55A;font-weight:700;}
+.pv-next-pct{font-size:0.72rem;color:rgba(224,208,192,0.55);font-family:Arial,sans-serif;margin-bottom:6px;}
+.pv-next-bar{height:8px;background:#1a1a1a;border-radius:99px;overflow:hidden;}
+.pv-next-fill{height:100%;background:linear-gradient(90deg,#2a7a4d,#3FA767);border-radius:99px;transition:width 0.6s ease;}
+.pv-next.ready .pv-next-fill{background:linear-gradient(90deg,#C5A55A,#D4B96E);}
+.pv-next.ready .pv-next-pct{color:#3FA767;font-weight:600;}
+
+/* Strip horizontal */
+.pv-strip{display:flex;gap:8px;overflow-x:auto;padding:4px 0 6px;-webkit-overflow-scrolling:touch;}
+.pv-strip::-webkit-scrollbar{display:none;}
+.pv-step{flex:1;min-width:70px;background:#0d0d0d;border:1px solid #1a1a1a;border-radius:12px;padding:10px 8px;text-align:center;position:relative;transition:all 0.3s;}
+.pv-step.ready{border-color:rgba(197,165,90,0.4);background:rgba(197,165,90,0.05);}
+.pv-step.current{border-color:rgba(63,167,103,0.4);}
+.pv-step-pts{font-family:Georgia,serif;font-size:0.95rem;font-weight:700;color:#F5E6D3;line-height:1;}
+.pv-step.ready .pv-step-pts{color:#C5A55A;}
+.pv-step-name{font-size:0.62rem;color:rgba(224,208,192,0.55);font-family:Arial,sans-serif;letter-spacing:0.04em;line-height:1.25;margin-top:4px;display:block;}
+.pv-step-icon{font-size:0.85rem;margin-bottom:3px;display:block;opacity:0.7;}
+.pv-step.ready .pv-step-icon{opacity:1;}
+
 /* PREMIOS / REWARDS */
 .pv-rewards-head{text-align:center;margin-bottom:18px;}
 .pv-rewards-head h3{font-family:Georgia,serif;font-size:1.6rem;color:#C5A55A;font-weight:400;margin-bottom:4px;}
@@ -476,7 +504,24 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
           </div>
         </div>
       </div>
-      <button class="pts-btn" id="pv-accum-btn">Acumular puntos de esta visita</button>
+      <!-- PROGRESO -->
+      <div class="pv-progress">
+        <div class="pv-progress-head">
+          <span class="pv-prog-title">Tu progreso</span>
+          <span class="pv-prog-link" id="pv-prog-link">Ver todos los premios →</span>
+        </div>
+        <div class="pv-next" id="pv-next">
+          <div class="pv-next-row">
+            <span class="pv-next-name" id="pv-next-name">Cargando...</span>
+            <span class="pv-next-cost" id="pv-next-cost"></span>
+          </div>
+          <div class="pv-next-pct" id="pv-next-pct"></div>
+          <div class="pv-next-bar"><div class="pv-next-fill" id="pv-next-fill" style="width:0%"></div></div>
+        </div>
+        <div class="pv-strip" id="pv-strip"></div>
+      </div>
+
+      <button class="pts-btn" id="pv-accum-btn" style="margin-top:14px;">Acumular puntos de esta visita</button>
       <button class="pts-btn secondary" id="pv-rewards-btn" style="margin-top:10px;">🎁 Ver mis premios</button>
       <button class="pts-btn secondary" id="pv-logout-btn" style="margin-top:10px;">Cerrar sesión</button>
       <div class="pts-ok" id="pv-dash-msg"></div>
@@ -1032,6 +1077,60 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
         btn.textContent = 'Disponible en '+h+'h '+m+'min';
       }
     }
+    // Cargar el progreso (premios)
+    loadProgress(c);
+  }
+
+  // Iconos por costo (mapeo simple)
+  function rewardIcon(cost){
+    if (cost <= 250) return '🍹';
+    if (cost <= 600) return '🎉';
+    if (cost <= 1200) return '💸';
+    return '🎁';
+  }
+
+  function loadProgress(c){
+    var tel = c && c.telefono;
+    if (!tel) return;
+    api('getRewards', { telefono: tel }).then(function(r){
+      if (!r.ok || !r.rewards) return;
+      var list = r.rewards.slice().sort(function(a,b){ return Number(a.costo_pts)-Number(b.costo_pts); });
+      var pts = Number(c.puntos_actuales)||0;
+
+      // ----- Próximo premio: el primero NO alcanzado todavía
+      var next = null;
+      for (var i = 0; i < list.length; i++){
+        if (pts < Number(list[i].costo_pts)){ next = list[i]; break; }
+      }
+      // Si ya alcanzó todos: mostrar el máximo como "listo"
+      if (!next && list.length) next = list[list.length-1];
+
+      var nextEl = $('pv-next');
+      if (next){
+        var cost = Number(next.costo_pts);
+        var ready = pts >= cost;
+        var pct = Math.min(100, Math.round((pts/cost)*100));
+        var remaining = Math.max(0, cost - pts);
+        $('pv-next-name').textContent = next.nombre;
+        $('pv-next-cost').textContent = cost + ' pts';
+        $('pv-next-pct').textContent  = ready ? '✓ ¡Listo para canjear!' : 'Te faltan ' + remaining + ' pts ('+pct+'%)';
+        $('pv-next-fill').style.width = pct + '%';
+        nextEl.classList.toggle('ready', ready);
+      }
+
+      // ----- Strip horizontal con los 4 premios
+      var stripHtml = list.map(function(rw){
+        var cost = Number(rw.costo_pts);
+        var ready = pts >= cost;
+        var current = next && next.id === rw.id;
+        return '<div class="pv-step '+(ready?'ready':'')+' '+(current?'current':'')+'">' +
+          '<span class="pv-step-icon">'+ rewardIcon(cost) +'</span>' +
+          '<span class="pv-step-pts">'+ cost +'</span>' +
+          '<span class="pv-step-name">'+ rw.nombre +'</span>' +
+        '</div>';
+      }).join('');
+      $('pv-strip').innerHTML = stripHtml;
+    });
   }
 
   function enterDashboard(cliente){
@@ -1122,6 +1221,7 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
 
   // Mis Premios
   $('pv-rewards-btn').addEventListener('click', function(){ showView('rewards'); loadRewards(); });
+  $('pv-prog-link').addEventListener('click', function(){ showView('rewards'); loadRewards(); });
   $('pv-rewards-back').addEventListener('click', function(){ showView('dash'); var s=S.get(); if(s&&s.cliente) renderDash(s.cliente); });
 
   // Bolita → cerrar splash si está visible + ir a sección puntos / vista premios
