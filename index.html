@@ -152,9 +152,9 @@ textarea:focus{outline:none;border-color:rgba(197,165,90,0.25);}
 .pts-floating{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:4rem;color:#FFD700;font-weight:700;font-family:Georgia,serif;z-index:2000;pointer-events:none;text-shadow:0 0 40px rgba(255,215,0,0.6);animation:ptsFloat 1.6s ease-out both;}
 @keyframes ptsFloat{0%{opacity:0;transform:translate(-50%,-50%) scale(0.3);}30%{opacity:1;transform:translate(-50%,-50%) scale(1.2);}70%{opacity:1;transform:translate(-50%,-70%) scale(1);}100%{opacity:0;transform:translate(-50%,-120%) scale(0.9);}}
 
-/* BOLITA FLOTANTE DE PUNTOS */
-.pts-bubble{position:fixed;top:12px;right:12px;z-index:10000;display:none;align-items:center;gap:8px;padding:7px 12px 7px 8px;background:linear-gradient(135deg,#C5A55A,#D4B96E);color:#1a1a1a;border:none;border-radius:99px;font-family:Georgia,serif;font-weight:700;font-size:0.78rem;letter-spacing:0.02em;box-shadow:0 6px 22px rgba(197,165,90,0.5),0 2px 6px rgba(0,0,0,0.5);cursor:pointer;animation:bubblePulse 2.4s ease-in-out infinite;text-decoration:none;max-width:calc(100vw - 24px);}
-.pts-bubble.show{display:inline-flex;}
+/* BOLITA FLOTANTE DE PUNTOS — siempre visible */
+.pts-bubble{position:fixed;top:12px;right:12px;z-index:10000;display:inline-flex;align-items:center;gap:8px;padding:7px 12px 7px 8px;background:linear-gradient(135deg,#C5A55A,#D4B96E);color:#1a1a1a;border:none;border-radius:99px;font-family:Georgia,serif;font-weight:700;font-size:0.78rem;letter-spacing:0.02em;box-shadow:0 6px 22px rgba(197,165,90,0.5),0 2px 6px rgba(0,0,0,0.5);cursor:pointer;animation:bubblePulse 2.4s ease-in-out infinite;text-decoration:none;max-width:calc(100vw - 24px);}
+.pts-bubble.hidden{display:none !important;}
 .pts-bubble .pb-icon{width:28px;height:28px;border-radius:50%;background:#1a1a1a;color:#C5A55A;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
 .pts-bubble .pb-col{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05;min-width:0;}
 .pts-bubble .pb-lbl{font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.75;font-weight:700;font-family:Arial,sans-serif;white-space:nowrap;}
@@ -569,8 +569,8 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
 <div id="sendErr" style="display:none;color:#CD5C5C;margin-top:12px;font-size:0.85rem;"></div>
 </div></div>
 
-<!-- BOLITA FLOTANTE DE PUNTOS -->
-<a href="javascript:void(0);" class="pts-bubble" id="pts-bubble" aria-label="Mis puntos">
+<!-- BOLITA FLOTANTE DE PUNTOS — visible siempre -->
+<a href="javascript:void(0);" class="pts-bubble" id="pts-bubble" aria-label="Mis puntos" style="display:inline-flex;">
   <div class="pb-icon">🎁</div>
   <div class="pb-col">
     <span class="pb-lbl" id="pb-lbl">Gana premios</span>
@@ -827,30 +827,31 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     var t=$('pv-'+v); if(t) t.classList.add('show');
   }
 
-  // ============ BOLITA FLOTANTE ============
+  // ============ BOLITA FLOTANTE (siempre visible por CSS) ============
   function refreshBubble(){
-    var b = $('pts-bubble'); if(!b) return;
+    var b = document.getElementById('pts-bubble'); if(!b) return;
+    b.classList.remove('hidden');
     var s = S.get();
-    var lbl = $('pb-lbl'), num = $('pb-num'), badge = $('pb-badge');
+    var lbl = document.getElementById('pb-lbl');
+    var num = document.getElementById('pb-num');
+    var badge = document.getElementById('pb-badge');
 
     if (s && s.cliente && S.valid()){
       var pts = Number(s.cliente.puntos_actuales)||0;
-      lbl.textContent = 'Mis puntos';
-      num.textContent = pts + ' pts';
-      if (pts >= 2000){
-        badge.textContent = '$100'; badge.style.background = '#3FA767'; badge.style.display = 'inline-block';
-      } else if (pts >= 200){
-        badge.textContent = '¡LISTO!'; badge.style.background = '#8B0000'; badge.style.display = 'inline-block';
-      } else { badge.style.display = 'none'; }
+      if (lbl) lbl.textContent = 'Mis puntos';
+      if (num) num.textContent = pts + ' pts';
+      if (badge){
+        if (pts >= 2000){ badge.textContent='$100'; badge.style.background='#3FA767'; badge.style.display='inline-block'; }
+        else if (pts >= 200){ badge.textContent='¡LISTO!'; badge.style.background='#8B0000'; badge.style.display='inline-block'; }
+        else { badge.style.display='none'; }
+      }
     } else {
-      lbl.textContent = 'Gana premios';
-      num.textContent = 'Iniciar';
-      badge.style.display = 'none';
+      if (lbl) lbl.textContent = 'Gana premios';
+      if (num) num.textContent = 'Iniciar';
+      if (badge) badge.style.display = 'none';
     }
-    b.classList.add('show');
   }
 
-  // Compatibilidad — ahora siempre visible
   function setBubbleVisibility(){ refreshBubble(); }
 
   // ============ PREMIOS ============
