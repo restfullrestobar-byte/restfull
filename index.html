@@ -890,6 +890,8 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
   // ============ BOLITA FLOTANTE (siempre visible por CSS) ============
   function refreshBubble(){
     var b = document.getElementById('pts-bubble'); if(!b) return;
+    // Asegurar que está en body (no dentro de #main que tiene opacity:0)
+    if (b.parentElement !== document.body) document.body.appendChild(b);
     b.classList.remove('hidden');
     var s = S.get();
     var lbl = document.getElementById('pb-lbl');
