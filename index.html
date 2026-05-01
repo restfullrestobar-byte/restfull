@@ -969,11 +969,8 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
       $('pv-reset-banner').style.display = myPts >= 2000 ? 'block' : 'none';
 
       api('getRewards', { telefono: tel }).then(function(r){
-        var list = (r.rewards||[]).sort(function(a,b){ return Number(a.costo_pts)-Number(b.costo_pts); });
-        if (!list.length) {
-          $('pv-rewards-list').innerHTML = '<div style="text-align:center;color:rgba(224,208,192,0.4);padding:30px;">No hay premios disponibles ahora.</div>';
-          return;
-        }
+        var fromApi = (r && r.ok && r.rewards && r.rewards.length) ? r.rewards : DEFAULT_REWARDS;
+        var list = fromApi.slice().sort(function(a,b){ return Number(a.costo_pts)-Number(b.costo_pts); });
         $('pv-rewards-list').innerHTML = list.map(function(rw){ return renderRewardCard(rw, myPts); }).join('');
       });
     });
@@ -1113,12 +1110,20 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     return '🎁';
   }
 
+  // Premios fallback (si la hoja Recompensas está vacía)
+  var DEFAULT_REWARDS = [
+    { id:'REW001', nombre:'Cóctel gratis',          descripcion:'Cualquier cóctel de la casa',                       costo_pts:200,  nivel_minimo:'Bronce' },
+    { id:'REW002', nombre:'Entrada al evento',      descripcion:'Entrada gratis al evento de la semana',             costo_pts:500,  nivel_minimo:'Bronce' },
+    { id:'REW003', nombre:'50% en pedido personal', descripcion:'50% off en 1 plato + 1 bebida (consumo personal)',  costo_pts:1000, nivel_minimo:'Plata'  },
+    { id:'REW004', nombre:'Consumo $100',           descripcion:'Canjea un consumo valorado en $100',                costo_pts:2000, nivel_minimo:'Oro'    }
+  ];
+
   function loadProgress(c){
     var tel = c && c.telefono;
     if (!tel) return;
     api('getRewards', { telefono: tel }).then(function(r){
-      if (!r.ok || !r.rewards) return;
-      var list = r.rewards.slice().sort(function(a,b){ return Number(a.costo_pts)-Number(b.costo_pts); });
+      var rewards = (r && r.ok && r.rewards && r.rewards.length) ? r.rewards : DEFAULT_REWARDS;
+      var list = rewards.slice().sort(function(a,b){ return Number(a.costo_pts)-Number(b.costo_pts); });
       var pts = Number(c.puntos_actuales)||0;
 
       // ----- Próximo premio: el primero NO alcanzado todavía
