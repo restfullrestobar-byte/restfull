@@ -44,6 +44,57 @@ nav#subnav::-webkit-scrollbar{display:none;}
 .evt-bg .sec-head h2::after{background:linear-gradient(90deg,transparent,#B22222,transparent);}
 .evt-empty{max-width:520px;margin:30px auto 0;text-align:center;color:rgba(224,208,192,0.55);font-family:Arial,sans-serif;font-size:0.9rem;line-height:1.7;padding:30px 20px;border:1px dashed rgba(178,34,34,0.25);border-radius:18px;background:rgba(178,34,34,0.04);}
 .evt-empty .evt-icon{font-size:3rem;margin-bottom:10px;opacity:0.6;}
+.evt-tag{text-align:center;color:#B22222;font-size:0.72rem;letter-spacing:0.5em;margin-bottom:14px;font-family:Arial,sans-serif;font-weight:700;}
+.evt-wrap{max-width:1100px;margin:30px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+.evt-cal{background:#0a0a0a;border:1px solid rgba(178,34,34,0.25);border-radius:22px;padding:24px 20px;}
+.evt-cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding:0 4px;}
+.evt-nav{width:38px;height:38px;border-radius:50%;background:transparent;border:1px solid rgba(255,255,255,0.1);color:#fff;cursor:pointer;font-size:1rem;font-family:Georgia,serif;display:flex;align-items:center;justify-content:center;transition:all 0.3s;}
+.evt-nav:hover{background:rgba(178,34,34,0.15);border-color:#B22222;}
+.evt-mw{text-align:center;}
+.evt-month{font-family:Georgia,serif;font-size:1.5rem;color:#fff;font-weight:400;}
+.evt-year{color:#B22222;font-size:0.7rem;letter-spacing:0.3em;margin-top:2px;font-family:Arial,sans-serif;font-weight:700;}
+.evt-wd{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;}
+.evt-wd span{text-align:center;color:rgba(255,255,255,0.35);font-size:0.7rem;letter-spacing:0.05em;padding:6px 0;font-family:Arial,sans-serif;}
+.evt-days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.evt-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;color:#fff;cursor:pointer;position:relative;transition:all 0.2s;font-size:0.92rem;font-family:Georgia,serif;}
+.evt-day:hover:not(.muted){background:rgba(255,255,255,0.04);}
+.evt-day.muted{color:rgba(255,255,255,0.18);cursor:default;}
+.evt-day.today{background:#B22222;font-weight:700;color:#fff;}
+.evt-day.selected:not(.today){outline:1.5px solid rgba(178,34,34,0.6);}
+.evt-dots{display:flex;gap:3px;position:absolute;bottom:5px;}
+.evt-dot{width:4px;height:4px;border-radius:50%;background:#B22222;}
+.evt-legend{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.05);}
+.evt-leg{display:flex;align-items:center;gap:6px;font-size:0.72rem;color:rgba(255,255,255,0.5);font-family:Arial,sans-serif;}
+.evt-leg-dot{width:6px;height:6px;border-radius:50%;background:#B22222;flex-shrink:0;}
+.evt-detail{padding:12px 4px 0;}
+.evt-detail-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.evt-tag-small{color:rgba(255,255,255,0.4);font-size:0.72rem;letter-spacing:0.2em;font-family:Arial,sans-serif;font-weight:700;}
+.evt-live{background:#B22222;color:#fff;padding:5px 12px;border-radius:99px;font-size:0.66rem;font-weight:700;letter-spacing:0.1em;display:inline-flex;align-items:center;gap:6px;font-family:Arial,sans-serif;}
+.evt-live-dot{width:6px;height:6px;background:#fff;border-radius:50%;animation:liveBlink 1.5s infinite;}
+@keyframes liveBlink{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.evt-detail-title{font-family:Georgia,serif;font-size:clamp(1.6rem,3.5vw,2.4rem);color:#fff;font-weight:400;margin-bottom:18px;line-height:1.1;}
+.evt-card{background:linear-gradient(135deg,#0e0e0e,#0a0a0a);border:1px solid rgba(178,34,34,0.18);border-radius:18px;padding:20px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start;transition:all 0.3s;}
+.evt-card:hover{border-color:rgba(178,34,34,0.35);transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,0.4);}
+.evt-card-icon{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#C5A55A,#8B5A2B);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.evt-card-body{flex:1;min-width:0;}
+.evt-card-body h4{font-family:Georgia,serif;font-size:1.15rem;color:#fff;font-weight:400;margin-bottom:5px;line-height:1.25;}
+.evt-card-body p{color:rgba(224,208,192,0.55);font-size:0.82rem;line-height:1.5;font-family:Arial,sans-serif;margin-bottom:10px;}
+.evt-card-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+.evt-card-price{background:rgba(178,34,34,0.15);border:1px solid rgba(178,34,34,0.4);color:#CD5C5C;font-weight:700;padding:4px 10px;border-radius:6px;font-size:0.75rem;display:inline-block;font-family:Arial,sans-serif;letter-spacing:0.05em;}
+.evt-card-cat{color:rgba(255,255,255,0.4);font-size:0.78rem;font-family:Arial,sans-serif;}
+.evt-card-time{display:inline-flex;align-items:center;gap:5px;color:rgba(224,208,192,0.6);font-size:0.78rem;font-family:Arial,sans-serif;background:rgba(255,255,255,0.04);padding:3px 10px;border-radius:6px;}
+.evt-no{text-align:center;padding:50px 20px;color:rgba(255,255,255,0.35);font-style:italic;font-family:Arial,sans-serif;font-size:0.9rem;background:rgba(255,255,255,0.02);border-radius:14px;border:1px dashed rgba(255,255,255,0.08);}
+.evt-notif{position:fixed;bottom:90px;right:22px;z-index:998;background:rgba(15,15,15,0.95);backdrop-filter:blur(20px);border:1px solid rgba(178,34,34,0.3);border-radius:14px;padding:14px 18px 14px 14px;display:none;align-items:flex-start;gap:12px;max-width:280px;box-shadow:0 12px 40px rgba(0,0,0,0.5);font-family:Arial,sans-serif;}
+.evt-notif.show{display:flex;animation:notifIn 0.5s both;}
+.evt-notif-icon{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.evt-notif-body{flex:1;min-width:0;padding-right:14px;}
+.evt-notif-tag{color:#CD5C5C;font-size:0.62rem;letter-spacing:0.18em;font-weight:700;margin-bottom:2px;}
+.evt-notif-ttl{color:#fff;font-family:Georgia,serif;font-size:1rem;line-height:1.2;margin-bottom:2px;}
+.evt-notif-sub{color:rgba(224,208,192,0.55);font-size:0.72rem;line-height:1.3;}
+.evt-notif-close{position:absolute;top:8px;right:10px;background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:1rem;padding:2px 6px;line-height:1;}
+.evt-notif-close:hover{color:#fff;}
+@keyframes notifIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@media(max-width:780px){.evt-wrap{grid-template-columns:1fr;gap:18px;}.evt-detail-title{font-size:1.7rem;}.evt-bg{padding:70px 16px 60px;}.evt-notif{bottom:78px;right:12px;max-width:220px;padding:10px 14px;}}
 
 .sec{max-width:860px;margin:0 auto;padding:70px 24px 40px;display:none;position:relative;overflow:hidden;}
 .sec.show{display:block;animation:secIn 0.6s both;}
@@ -278,7 +329,7 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
 <div id="splash">
   <div class="sp-particles" id="sp"></div>
   <div class="welcome">Bienvenidos a</div>
-  <img class="logo-img" src="data:image/png;base64,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" alt="Restful Restobar">
+  <img class="logo-img" src="Logo.png" alt="Restful Restobar">
   <div class="tagline">Donde cada momento es especial</div>
   <button class="enter-btn" id="enterBtn">Explorar Menú</button>
   <button class="enter-btn rewards-btn" id="rewardsBtn" style="animation-delay:2.6s;margin-top:12px;border-color:rgba(197,165,90,0.55);color:#C5A55A;background:linear-gradient(135deg,rgba(197,165,90,0.08),rgba(212,185,110,0.06));">🎁 Mis Premios</button>
@@ -447,14 +498,48 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
 <div class="item"><div class="info"><div class="name">Black &amp; White</div></div><div class="price">$50</div></div>
 <div class="item"><div class="info"><div class="name">Red Label</div></div><div class="price">$5 <small>/ $50</small></div></div>
 </div></div>
-<!-- EVENTOS (placeholder) -->
+<!-- EVENTOS -->
 <div class="evt-bg" id="eventos-w">
-  <div class="sec-head"><h2>Eventos en vivo</h2><div class="sub">Cada noche tiene su plan en Restful</div></div>
-  <div class="evt-empty">
-    <div class="evt-icon">📅</div>
-    <b>Próximamente</b><br>
-    Estamos preparando la agenda de eventos.<br>
-    Muy pronto verás aquí todas las noches especiales de Restful Restobar.
+  <div class="evt-tag">AGENDA</div>
+  <div class="sec-head" style="margin-bottom:8px;"><h2>Eventos en vivo</h2><div class="sub">Cada noche tiene su plan en Restful</div></div>
+  <div class="evt-wrap">
+    <div class="evt-cal">
+      <div class="evt-cal-head">
+        <button class="evt-nav" id="evt-prev" aria-label="Mes anterior">&#8249;</button>
+        <div class="evt-mw">
+          <div class="evt-month" id="evt-month">Mayo</div>
+          <div class="evt-year" id="evt-year">2026</div>
+        </div>
+        <button class="evt-nav" id="evt-next" aria-label="Mes siguiente">&#8250;</button>
+      </div>
+      <div class="evt-wd"><span>D</span><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span></div>
+      <div class="evt-days" id="evt-days"></div>
+      <div class="evt-legend">
+        <div class="evt-leg"><span class="evt-leg-dot"></span>Promo del día</div>
+        <div class="evt-leg"><span class="evt-leg-dot"></span>Karaoke</div>
+        <div class="evt-leg"><span class="evt-leg-dot"></span>Jueves de alitas</div>
+        <div class="evt-leg"><span class="evt-leg-dot"></span>Evento especial</div>
+      </div>
+    </div>
+    <div class="evt-detail">
+      <div class="evt-detail-head">
+        <span class="evt-tag-small" id="evt-day-tag">HOY</span>
+        <span class="evt-live" id="evt-live-badge" style="display:none;"><span class="evt-live-dot"></span>HOY</span>
+      </div>
+      <h3 class="evt-detail-title" id="evt-day-title">Mayo 2026</h3>
+      <div id="evt-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Notif EN VIVO -->
+<div class="evt-notif" id="evt-notif">
+  <button class="evt-notif-close" id="evt-notif-close">&times;</button>
+  <div class="evt-notif-icon">🍸</div>
+  <div class="evt-notif-body">
+    <div class="evt-notif-tag">EN VIVO</div>
+    <div class="evt-notif-ttl">Happy Hour activa</div>
+    <div class="evt-notif-sub">2x1 en mojitos · hasta las 19:00</div>
   </div>
 </div>
 
@@ -1284,6 +1369,137 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     }
     if (bubbleTries > 24) clearInterval(bubbleInterval);
   }, 500);
+})();
+
+// ==================== MÓDULO EVENTOS / CALENDARIO ====================
+(function(){
+  var EVENTS = {
+    '2026-05-06': [{titulo:'Miércoles de Costillas',descripcion:'3 platos de costillas premium a precio especial.',categoria:'Promo del día',precio:'2 X $30.00',extra:'en Costillas',hora:'19:00',icono:'🔥'}],
+    '2026-05-07': [{titulo:'Jueves de Alitas',descripcion:'Promo en todas las alitas durante toda la noche.',categoria:'Jueves de alitas',precio:'10 ALITAS $9',hora:'19:00',icono:'🍗'}],
+    '2026-05-08': [{titulo:'Karaoke Night',descripcion:'Sube al escenario y demuestra tu voz.',categoria:'Karaoke',hora:'21:00',icono:'🎤'},{titulo:'Happy Hour',descripcion:'2x1 en cócteles seleccionados.',categoria:'Promo del día',precio:'2X1',hora:'17:00-19:00',icono:'🍸'}],
+    '2026-05-13': [{titulo:'Miércoles de Costillas',descripcion:'3 platos de costillas premium a precio especial.',categoria:'Promo del día',precio:'2 X $30.00',extra:'en Costillas',hora:'19:00',icono:'🔥'}],
+    '2026-05-14': [{titulo:'Jueves de Alitas',descripcion:'Promo en todas las alitas durante toda la noche.',categoria:'Jueves de alitas',precio:'10 ALITAS $9',hora:'19:00',icono:'🍗'}],
+    '2026-05-15': [{titulo:'Karaoke Night',descripcion:'Sube al escenario y demuestra tu voz.',categoria:'Karaoke',hora:'21:00',icono:'🎤'},{titulo:'Happy Hour',descripcion:'2x1 en cócteles seleccionados.',categoria:'Promo del día',precio:'2X1',hora:'17:00-19:00',icono:'🍸'}],
+    '2026-05-17': [{titulo:'Intercambio de Cromos',descripcion:'¿Todavía no encuentras a tu jugador favorito? Únete a nuestro intercambio de cromos Panini con Cristiano, Modrić, Messi y más.',categoria:'Evento especial',precio:'$14.99',extra:'Nachos + 4 Club Premium',hora:'16:00',icono:'⚽'}],
+    '2026-05-20': [{titulo:'Miércoles de Costillas',descripcion:'3 platos de costillas premium a precio especial.',categoria:'Promo del día',precio:'2 X $30.00',extra:'en Costillas',hora:'19:00',icono:'🔥'}],
+    '2026-05-21': [{titulo:'Jueves de Alitas',descripcion:'Promo en todas las alitas durante toda la noche.',categoria:'Jueves de alitas',precio:'10 ALITAS $9',hora:'19:00',icono:'🍗'}],
+    '2026-05-22': [{titulo:'Karaoke Night',descripcion:'Sube al escenario y demuestra tu voz.',categoria:'Karaoke',hora:'21:00',icono:'🎤'},{titulo:'Happy Hour',descripcion:'2x1 en cócteles seleccionados.',categoria:'Promo del día',precio:'2X1',hora:'17:00-19:00',icono:'🍸'}],
+    '2026-05-27': [{titulo:'Miércoles de Costillas',descripcion:'3 platos de costillas premium a precio especial.',categoria:'Promo del día',precio:'2 X $30.00',extra:'en Costillas',hora:'19:00',icono:'🔥'}],
+    '2026-05-28': [{titulo:'Jueves de Alitas',descripcion:'Promo en todas las alitas durante toda la noche.',categoria:'Jueves de alitas',precio:'10 ALITAS $9',hora:'19:00',icono:'🍗'}],
+    '2026-05-29': [{titulo:'Karaoke Night',descripcion:'Sube al escenario y demuestra tu voz.',categoria:'Karaoke',hora:'21:00',icono:'🎤'},{titulo:'Happy Hour',descripcion:'2x1 en cócteles seleccionados.',categoria:'Promo del día',precio:'2X1',hora:'17:00-19:00',icono:'🍸'}]
+  };
+  var MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var DAYS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  var today = new Date();
+  var curY = today.getFullYear();
+  var curM = today.getMonth();
+  var sel = null;
+  function $(id){ return document.getElementById(id); }
+  function pad(n){ return n<10?'0'+n:''+n; }
+  function key(y,m,d){ return y+'-'+pad(m+1)+'-'+pad(d); }
+  function renderCal(){
+    if(!$('evt-days')) return;
+    $('evt-month').textContent = MONTHS[curM];
+    $('evt-year').textContent = curY;
+    var firstDay = new Date(curY,curM,1).getDay();
+    var daysIn = new Date(curY,curM+1,0).getDate();
+    var prevDays = new Date(curY,curM,0).getDate();
+    var html = '';
+    for(var i=firstDay-1;i>=0;i--){ html += '<div class="evt-day muted">'+(prevDays-i)+'</div>'; }
+    for(var d=1;d<=daysIn;d++){
+      var k = key(curY,curM,d);
+      var ev = EVENTS[k];
+      var isToday = (d===today.getDate() && curM===today.getMonth() && curY===today.getFullYear());
+      var isSel = sel===k;
+      var cls = 'evt-day';
+      if(isToday) cls += ' today';
+      if(isSel) cls += ' selected';
+      var dots = '';
+      if(ev && ev.length){
+        dots = '<div class="evt-dots">';
+        for(var x=0;x<Math.min(ev.length,3);x++) dots += '<span class="evt-dot"></span>';
+        dots += '</div>';
+      }
+      html += '<div class="'+cls+'" data-day="'+d+'" data-k="'+k+'">'+d+dots+'</div>';
+    }
+    var trailing = (7 - ((firstDay+daysIn)%7))%7;
+    for(var t=1;t<=trailing;t++) html += '<div class="evt-day muted">'+t+'</div>';
+    $('evt-days').innerHTML = html;
+    $('evt-days').querySelectorAll('.evt-day[data-day]').forEach(function(el){
+      el.addEventListener('click', function(){
+        sel = el.getAttribute('data-k');
+        renderCal();
+        renderDetail();
+      });
+    });
+  }
+  function renderCard(ev, dayNum){
+    var dp = dayNum ? '<span style="color:#B22222;font-weight:700;margin-right:8px;">'+dayNum+'</span>' : '';
+    var price = ev.precio ? '<span class="evt-card-price">'+ev.precio+'</span>' : '';
+    var extra = ev.extra ? '<span class="evt-card-cat">'+ev.extra+'</span>' : '';
+    var time = ev.hora ? '<span class="evt-card-time">🕐 '+ev.hora+'</span>' : '';
+    return '<div class="evt-card"><div class="evt-card-icon">'+(ev.icono||'🎉')+'</div><div class="evt-card-body"><h4>'+dp+ev.titulo+'</h4>'+(ev.descripcion?'<p>'+ev.descripcion+'</p>':'')+'<div class="evt-card-row">'+price+extra+time+'</div></div></div>';
+  }
+  function renderDetail(){
+    if(!$('evt-list')) return;
+    if(!sel){
+      $('evt-day-tag').textContent = MONTHS[curM].toUpperCase();
+      $('evt-day-title').textContent = MONTHS[curM]+' '+curY;
+      $('evt-live-badge').style.display = 'none';
+      var keys = Object.keys(EVENTS).filter(function(kk){
+        var p = kk.split('-');
+        return parseInt(p[0])===curY && parseInt(p[1])-1===curM;
+      }).sort();
+      if(!keys.length){
+        $('evt-list').innerHTML = '<div class="evt-no">No hay eventos programados este mes.</div>';
+      } else {
+        var html = '';
+        keys.forEach(function(kk){
+          var d = parseInt(kk.split('-')[2]);
+          EVENTS[kk].forEach(function(ev){ html += renderCard(ev, d); });
+        });
+        $('evt-list').innerHTML = html;
+      }
+      return;
+    }
+    var parts = sel.split('-');
+    var dObj = new Date(parseInt(parts[0]),parseInt(parts[1])-1,parseInt(parts[2]));
+    var tk = key(today.getFullYear(),today.getMonth(),today.getDate());
+    var isToday = sel===tk;
+    $('evt-day-tag').textContent = isToday ? 'HOY' : DAYS[dObj.getDay()].toUpperCase();
+    $('evt-day-title').textContent = DAYS[dObj.getDay()]+' '+dObj.getDate();
+    $('evt-live-badge').style.display = isToday ? 'inline-flex' : 'none';
+    var evs = EVENTS[sel];
+    if(!evs || !evs.length){
+      $('evt-list').innerHTML = '<div class="evt-no">No hay eventos programados este día.</div>';
+    } else {
+      $('evt-list').innerHTML = evs.map(function(e){ return renderCard(e); }).join('');
+    }
+  }
+  function initEvt(){
+    if(!$('evt-days')) return;
+    var tk = key(today.getFullYear(),today.getMonth(),today.getDate());
+    if(EVENTS[tk]){ sel = tk; }
+    renderCal();
+    renderDetail();
+    $('evt-prev').addEventListener('click', function(){
+      curM--; if(curM<0){curM=11;curY--;}
+      sel=null; renderCal(); renderDetail();
+    });
+    $('evt-next').addEventListener('click', function(){
+      curM++; if(curM>11){curM=0;curY++;}
+      sel=null; renderCal(); renderDetail();
+    });
+    var notif = $('evt-notif');
+    if(notif){
+      var hour = today.getHours();
+      if(hour>=17 && hour<19){
+        setTimeout(function(){ notif.classList.add('show'); }, 1500);
+      }
+      $('evt-notif-close').addEventListener('click', function(){ notif.classList.remove('show'); });
+    }
+  }
+  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', initEvt); } else { initEvt(); }
 })();
 </script>
 </body>
