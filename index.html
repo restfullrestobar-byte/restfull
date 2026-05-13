@@ -581,9 +581,15 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
         <input class="pts-input" id="pv-reg-nombre" type="text" placeholder="Nombre completo" autocomplete="name">
         <input class="pts-input" id="pv-reg-tel" type="tel" inputmode="numeric" placeholder="Teléfono (ej: 0981234567)" autocomplete="tel">
         <input class="pts-input" id="pv-reg-email" type="email" placeholder="Correo electrónico" autocomplete="email">
+        <label style="display:block;font-size:0.72rem;color:rgba(245,230,211,0.55);letter-spacing:0.08em;text-transform:uppercase;margin:6px 0 4px 4px;font-family:Arial,sans-serif;">Fecha de nacimiento</label>
+        <input class="pts-input" id="pv-reg-fnac" type="date" autocomplete="bday" style="color-scheme:dark;">
         <label class="pts-check">
           <input type="checkbox" id="pv-reg-acepto">
           <span>Acepto los <span class="pts-terms-link" id="pv-terms-link">términos y condiciones</span> y el tratamiento de mis datos personales.</span>
+        </label>
+        <label class="pts-check">
+          <input type="checkbox" id="pv-reg-wa" checked>
+          <span>Quiero recibir promociones y avisos de eventos por <b style="color:#C5A55A;">correo / WhatsApp</b>.</span>
         </label>
         <button class="pts-btn" id="pv-reg-btn">Registrarme</button>
         <div class="pts-err" id="pv-reg-err"></div>
@@ -1244,14 +1250,33 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     var nombre = ($('pv-reg-nombre').value||'').trim();
     var tel    = ($('pv-reg-tel').value||'').trim();
     var email  = ($('pv-reg-email').value||'').trim();
+    var fnac   = ($('pv-reg-fnac') && $('pv-reg-fnac').value) ? $('pv-reg-fnac').value : '';
+    var waOpt  = $('pv-reg-wa') ? !!$('pv-reg-wa').checked : false;
     var acepto = $('pv-reg-acepto').checked;
     var err = $('pv-reg-err');
     err.textContent='';
     if (!nombre||!tel||!email) { err.textContent='Completa todos los campos'; return; }
+    if (!fnac)                 { err.textContent='Ingresa tu fecha de nacimiento'; return; }
     if (!acepto)               { err.textContent='Debes aceptar los términos'; return; }
+    // Edad mínima 18
+    try {
+      var nacD = new Date(fnac);
+      var hoy = new Date();
+      var edad = hoy.getFullYear() - nacD.getFullYear();
+      var m = hoy.getMonth() - nacD.getMonth();
+      if (m < 0 || (m === 0 && hoy.getDate() < nacD.getDate())) edad--;
+      if (edad < 18) { err.textContent='Debes ser mayor de 18 años'; return; }
+    } catch(_){}
     this.disabled=true; this.textContent='Creando...';
     var btn=this;
-    api('register', { nombre:nombre, telefono:tel, email:email, acepto_terminos:true }).then(function(r){
+    api('register', {
+      nombre: nombre,
+      telefono: tel,
+      email: email,
+      fecha_nacimiento: fnac,
+      whatsapp_optin: waOpt,
+      acepto_terminos: true
+    }).then(function(r){
       btn.disabled=false; btn.textContent='Registrarme';
       if (r.ok) enterDashboard(r.cliente);
       else err.textContent = r.error || 'Error al registrar';
@@ -1368,30 +1393,49 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
   });
 
   loadConfig();
+  // Mostrar bolita en splash; ocultarla cuando entre al sitio
   setBubbleVisibility();
-  window.addEventListener('rfb-splash-closed', setBubbleVisibility);
+  window.addEventListener('rfb-splash-closed', function(){
+    var b = document.getElementById('pts-bubble');
+    if (b) b.classList.add('hidden');
+  });
   var bubbleTries = 0;
   var bubbleInterval = setInterval(function(){
     bubbleTries++;
     var splash = document.getElementById('splash');
     if (!splash || splash.style.display==='none' || splash.classList.contains('gone')){
-      setBubbleVisibility();
+      var b = document.getElementById('pts-bubble');
+      if (b) b.classList.add('hidden');
       clearInterval(bubbleInterval);
     }
     if (bubbleTries > 24) clearInterval(bubbleInterval);
   }, 500);
 })();
 
-// ==================== MÓDULO EVENTOS / CALENDARIO ====================
+// ==================== MÓDULO EVENTOS / CALENDARIO (API) ====================
 (function(){
-  var EVENTS = {
-    '2026-05-02': [{titulo:'DJ y Karaoke',descripcion:'Música en vivo con DJ y noche de karaoke.',categoria:'Sábado',hora:'21:00',icono:'🎤'}],
-    '2026-05-09': [{titulo:'DJ y Karaoke',descripcion:'Música en vivo con DJ y noche de karaoke.',categoria:'Sábado',hora:'21:00',icono:'🎤'}],
-    '2026-05-16': [{titulo:'DJ y Karaoke',descripcion:'Música en vivo con DJ y noche de karaoke.',categoria:'Sábado',hora:'21:00',icono:'🎤'}],
-    '2026-05-17': [{titulo:'Intercambio de Cromos',descripcion:'¿Todavía no encuentras a tu jugador favorito? Únete a nuestro intercambio de cromos Panini con Cristiano, Modrić, Messi y más.',categoria:'Evento especial',precio:'$14.99',extra:'Nachos + 4 Club Premium',hora:'16:00',icono:'⚽'}],
-    '2026-05-23': [{titulo:'DJ y Karaoke',descripcion:'Música en vivo con DJ y noche de karaoke.',categoria:'Sábado',hora:'21:00',icono:'🎤'}],
-    '2026-05-30': [{titulo:'DJ y Karaoke',descripcion:'Música en vivo con DJ y noche de karaoke.',categoria:'Sábado',hora:'21:00',icono:'🎤'}]
+  var API_URL = 'https://script.google.com/macros/s/AKfycbxXrmUzzWOQFHEO7ST509Xgu5-6vv3m4qt81cPMnlWMygk7jAKxXEB9anaSeoqk1TGj/exec';
+
+  // Cache: 'YYYY-MM' -> array de eventos
+  var CACHE = {};
+  // Index: 'YYYY-MM-DD' -> array de eventos del día
+  var BYDAY = {};
+
+  // Mapeo icon→emoji (mismo que el backend para coherencia)
+  var ICON_MAP = {
+    mic:'🎤', music:'🎵', dj:'🎧', soccer:'⚽', ball:'⚽',
+    fire:'🔥', beer:'🍺', glass:'🍸', cocktail:'🍸', wine:'🍷',
+    star:'⭐', gift:'🎁', party:'🎉', heart:'❤️', trophy:'🏆',
+    food:'🍽️', burger:'🍔', wings:'🍗', steak:'🥩'
   };
+  function iconEmoji(i){ return ICON_MAP[String(i||'').toLowerCase().trim()] || '🎉'; }
+  function fmtHora(h){ var n = Number(h)||0; return (n<10?'0':'')+n+':00'; }
+  function rangoHora(ev){
+    if(!ev.hora_inicio && !ev.hora_fin) return '';
+    if(!ev.hora_fin) return fmtHora(ev.hora_inicio);
+    return fmtHora(ev.hora_inicio)+' — '+fmtHora(ev.hora_fin);
+  }
+
   var MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   var DAYS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
   var today = new Date();
@@ -1401,6 +1445,31 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
   function $(id){ return document.getElementById(id); }
   function pad(n){ return n<10?'0'+n:''+n; }
   function key(y,m,d){ return y+'-'+pad(m+1)+'-'+pad(d); }
+  function monthKey(y,m){ return y+'-'+pad(m+1); }
+
+  // Carga eventos del mes vía API (con cache)
+  function loadMonth(y, m){
+    var mk = monthKey(y, m);
+    if (CACHE[mk]) return Promise.resolve(CACHE[mk]);
+    var desde = y+'-'+pad(m+1)+'-01';
+    var lastDay = new Date(y, m+1, 0).getDate();
+    var hasta = y+'-'+pad(m+1)+'-'+pad(lastDay);
+    var url = API_URL+'?action=getEvents&desde='+desde+'&hasta='+hasta;
+    return fetch(url).then(function(r){return r.json();}).then(function(d){
+      var events = (d && d.ok && d.events) ? d.events : [];
+      CACHE[mk] = events;
+      events.forEach(function(ev){
+        if(!BYDAY[ev.fecha]) BYDAY[ev.fecha] = [];
+        BYDAY[ev.fecha].push(ev);
+      });
+      return events;
+    }).catch(function(e){
+      console.log('getEvents error', e);
+      CACHE[mk] = [];
+      return [];
+    });
+  }
+
   function renderCal(){
     if(!$('evt-days')) return;
     $('evt-month').textContent = MONTHS[curM];
@@ -1412,7 +1481,7 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     for(var i=firstDay-1;i>=0;i--){ html += '<div class="evt-day muted">'+(prevDays-i)+'</div>'; }
     for(var d=1;d<=daysIn;d++){
       var k = key(curY,curM,d);
-      var ev = EVENTS[k];
+      var ev = BYDAY[k];
       var isToday = (d===today.getDate() && curM===today.getMonth() && curY===today.getFullYear());
       var isSel = sel===k;
       var cls = 'evt-day';
@@ -1421,7 +1490,10 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
       var dots = '';
       if(ev && ev.length){
         dots = '<div class="evt-dots">';
-        for(var x=0;x<Math.min(ev.length,3);x++) dots += '<span class="evt-dot"></span>';
+        for(var x=0;x<Math.min(ev.length,3);x++){
+          var color = ev[x].color || '#B22222';
+          dots += '<span class="evt-dot" style="background:'+color+'"></span>';
+        }
         dots += '</div>';
       }
       html += '<div class="'+cls+'" data-day="'+d+'" data-k="'+k+'">'+d+dots+'</div>';
@@ -1437,39 +1509,52 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
       });
     });
   }
-  function renderCard(ev, dayNum){
-    var dp = dayNum ? '<span style="color:#B22222;font-weight:700;margin-right:8px;">'+dayNum+'</span>' : '';
-    var price = ev.precio ? '<span class="evt-card-price">'+ev.precio+'</span>' : '';
-    var extra = ev.extra ? '<span class="evt-card-cat">'+ev.extra+'</span>' : '';
-    var time = ev.hora ? '<span class="evt-card-time">🕐 '+ev.hora+'</span>' : '';
-    return '<div class="evt-card"><div class="evt-card-icon">'+(ev.icono||'🎉')+'</div><div class="evt-card-body"><h4>'+dp+ev.titulo+'</h4>'+(ev.descripcion?'<p>'+ev.descripcion+'</p>':'')+'<div class="evt-card-row">'+price+extra+time+'</div></div></div>';
+
+  function renderCard(ev){
+    var color = ev.color || '#B22222';
+    var time = rangoHora(ev);
+    var timeHtml = time ? '<span class="evt-card-time">🕐 '+time+'</span>' : '';
+    return '<div class="evt-card" style="border-color:'+color+'33">' +
+      '<div class="evt-card-icon" style="background:linear-gradient(135deg,'+color+','+color+'aa)">'+iconEmoji(ev.icon)+'</div>' +
+      '<div class="evt-card-body">' +
+        '<h4>'+ev.titulo+'</h4>' +
+        (ev.subtitulo ? '<p>'+ev.subtitulo+'</p>' : '') +
+        '<div class="evt-card-row">'+timeHtml+'</div>' +
+      '</div></div>';
   }
   function renderCardWithDate(ev, dateObj){
     var dayLbl = DAYS[dateObj.getDay()]+' '+dateObj.getDate();
-    var price = ev.precio ? '<span class="evt-card-price">'+ev.precio+'</span>' : '';
-    var extra = ev.extra ? '<span class="evt-card-cat">'+ev.extra+'</span>' : '';
-    var time = ev.hora ? '<span class="evt-card-time">🕐 '+ev.hora+'</span>' : '';
-    return '<div class="evt-card"><div class="evt-card-icon">'+(ev.icono||'🎉')+'</div><div class="evt-card-body"><h4><span style="color:#B22222;font-weight:700;font-size:0.78rem;letter-spacing:0.1em;display:block;text-transform:uppercase;margin-bottom:4px;">'+dayLbl+'</span>'+ev.titulo+'</h4>'+(ev.descripcion?'<p>'+ev.descripcion+'</p>':'')+'<div class="evt-card-row">'+price+extra+time+'</div></div></div>';
+    var color = ev.color || '#B22222';
+    var time = rangoHora(ev);
+    var timeHtml = time ? '<span class="evt-card-time">🕐 '+time+'</span>' : '';
+    return '<div class="evt-card" style="border-color:'+color+'33">' +
+      '<div class="evt-card-icon" style="background:linear-gradient(135deg,'+color+','+color+'aa)">'+iconEmoji(ev.icon)+'</div>' +
+      '<div class="evt-card-body">' +
+        '<h4><span style="color:'+color+';font-weight:700;font-size:0.78rem;letter-spacing:0.1em;display:block;text-transform:uppercase;margin-bottom:4px;">'+dayLbl+'</span>'+ev.titulo+'</h4>' +
+        (ev.subtitulo ? '<p>'+ev.subtitulo+'</p>' : '') +
+        '<div class="evt-card-row">'+timeHtml+'</div>' +
+      '</div></div>';
   }
-  function getWeekEvents(){
+
+  // Eventos de los próximos N días (carga el mes siguiente si es necesario)
+  function getWeekEvents(n){
+    n = n || 7;
     var out = [];
-    for(var i=0;i<7;i++){
+    for(var i=0;i<n;i++){
       var d = new Date(today.getFullYear(), today.getMonth(), today.getDate()+i);
       var k = key(d.getFullYear(), d.getMonth(), d.getDate());
-      if(EVENTS[k]){
-        EVENTS[k].forEach(function(ev){ out.push({date:d, ev:ev}); });
-      }
+      if(BYDAY[k]) BYDAY[k].forEach(function(ev){ out.push({date:d, ev:ev}); });
     }
     return out;
   }
+
   function renderDetail(){
     if(!$('evt-list')) return;
     if(!sel){
-      // Vista por defecto: "Esta semana"
       $('evt-day-tag').textContent = 'PRÓXIMOS 7 DÍAS';
       $('evt-day-title').textContent = 'Esta semana';
       $('evt-live-badge').style.display = 'none';
-      var weekEvents = getWeekEvents();
+      var weekEvents = getWeekEvents(7);
       if(!weekEvents.length){
         $('evt-list').innerHTML = '<div class="evt-no">No hay eventos esta semana. Revisa el calendario.</div>';
       } else {
@@ -1486,58 +1571,74 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     $('evt-day-tag').textContent = isToday ? 'HOY' : DAYS[dObj.getDay()].toUpperCase();
     $('evt-day-title').textContent = DAYS[dObj.getDay()]+' '+dObj.getDate();
     $('evt-live-badge').style.display = isToday ? 'inline-flex' : 'none';
-    var evs = EVENTS[sel];
+    var evs = BYDAY[sel];
     if(!evs || !evs.length){
       $('evt-list').innerHTML = '<div class="evt-no">No hay eventos programados este día.</div>';
     } else {
       $('evt-list').innerHTML = evs.map(function(e){ return renderCard(e); }).join('');
     }
   }
+
+  // Próximo evento desde hoy (busca en cache - se asume mes actual + siguiente cargados)
   function getNextEvent(){
-    // Busca el próximo evento desde hoy (hasta 60 días adelante)
     for(var i=0;i<60;i++){
       var d = new Date(today.getFullYear(), today.getMonth(), today.getDate()+i);
       var k = key(d.getFullYear(), d.getMonth(), d.getDate());
-      if(EVENTS[k] && EVENTS[k].length){
-        return {date:d, ev:EVENTS[k][0], isToday:i===0};
+      if(BYDAY[k] && BYDAY[k].length){
+        return {date:d, ev:BYDAY[k][0], isToday:i===0};
       }
     }
     return null;
   }
+
+  function refreshNotif(){
+    var notif = $('evt-notif');
+    if(!notif) return;
+    var next = getNextEvent();
+    if(!next){ notif.classList.remove('show'); return; }
+    var icon = notif.querySelector('.evt-notif-icon');
+    var tag = notif.querySelector('.evt-notif-tag');
+    var ttl = notif.querySelector('.evt-notif-ttl');
+    var sub = notif.querySelector('.evt-notif-sub');
+    if(icon) icon.textContent = iconEmoji(next.ev.icon);
+    var time = rangoHora(next.ev);
+    if(next.isToday){
+      if(tag) tag.textContent = 'HOY';
+      if(ttl) ttl.textContent = next.ev.titulo;
+      if(sub) sub.textContent = (time ? time + ' · ' : '') + (next.ev.subtitulo || '');
+    } else {
+      if(tag) tag.textContent = 'PRÓXIMO EVENTO';
+      if(ttl) ttl.textContent = next.ev.titulo;
+      var dayName = DAYS[next.date.getDay()];
+      if(sub) sub.textContent = dayName+' '+next.date.getDate()+(time ? ' · '+time : '');
+    }
+    setTimeout(function(){ notif.classList.add('show'); }, 1500);
+  }
+
+  function loadAndRender(){
+    return Promise.all([
+      loadMonth(curY, curM),
+      // Pre-cargar mes siguiente para que la franja "esta semana" funcione cerca de fin de mes
+      loadMonth(curM === 11 ? curY+1 : curY, curM === 11 ? 0 : curM+1)
+    ]).then(function(){
+      renderCal();
+      renderDetail();
+    });
+  }
+
   function initEvt(){
     if(!$('evt-days')) return;
-    renderCal();
-    renderDetail();
+    loadAndRender().then(refreshNotif);
     $('evt-prev').addEventListener('click', function(){
       curM--; if(curM<0){curM=11;curY--;}
-      sel=null; renderCal(); renderDetail();
+      sel=null; loadAndRender();
     });
     $('evt-next').addEventListener('click', function(){
       curM++; if(curM>11){curM=0;curY++;}
-      sel=null; renderCal(); renderDetail();
+      sel=null; loadAndRender();
     });
-    // Notif del próximo evento
     var notif = $('evt-notif');
     if(notif){
-      var next = getNextEvent();
-      if(next){
-        var icon = notif.querySelector('.evt-notif-icon');
-        var tag = notif.querySelector('.evt-notif-tag');
-        var ttl = notif.querySelector('.evt-notif-ttl');
-        var sub = notif.querySelector('.evt-notif-sub');
-        if(icon) icon.textContent = next.ev.icono || '🎉';
-        if(next.isToday){
-          if(tag) tag.textContent = 'HOY';
-          if(ttl) ttl.textContent = next.ev.titulo;
-          if(sub) sub.textContent = (next.ev.hora?next.ev.hora+' · ':'')+(next.ev.extra||next.ev.precio||next.ev.categoria||'');
-        } else {
-          var dayName = DAYS[next.date.getDay()];
-          if(tag) tag.textContent = 'PRÓXIMO EVENTO';
-          if(ttl) ttl.textContent = next.ev.titulo;
-          if(sub) sub.textContent = dayName+' '+next.date.getDate()+' · '+(next.ev.hora||'')+(next.ev.precio?' · '+next.ev.precio:'');
-        }
-        setTimeout(function(){ notif.classList.add('show'); }, 1500);
-      }
       $('evt-notif-close').addEventListener('click', function(){ notif.classList.remove('show'); });
     }
   }
