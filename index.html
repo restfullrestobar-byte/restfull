@@ -30,6 +30,9 @@ nav#navbar::-webkit-scrollbar{display:none;}
 .pill svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
 .pill:hover{border-color:#B22222;color:#fff;transform:translateY(-1px);}
 .pill.on{background:linear-gradient(135deg,#fce5dc 0%,#f3c5b7 50%,#e08c7e 100%);color:#1a0000;border-color:transparent;box-shadow:0 10px 28px rgba(178,34,34,0.45),0 0 0 1px rgba(178,34,34,0.6),inset 0 1px 0 rgba(255,255,255,0.4);}
+.pill.pill-gold{border-color:rgba(212,185,110,0.55);color:#D4B96E;background:linear-gradient(135deg,rgba(212,185,110,0.06),rgba(197,165,90,0.04));}
+.pill.pill-gold:hover{border-color:#D4B96E;color:#fff;background:linear-gradient(135deg,rgba(212,185,110,0.18),rgba(197,165,90,0.10));box-shadow:0 6px 20px rgba(212,185,110,0.25);}
+.pill.pill-gold.on{background:linear-gradient(135deg,#fff3d6 0%,#e8c97a 55%,#b8923f 100%);color:#1a0e00;border-color:transparent;box-shadow:0 10px 28px rgba(212,185,110,0.45),0 0 0 1px rgba(184,146,63,0.6),inset 0 1px 0 rgba(255,255,255,0.4);}
 /* SUB NAV (categorías de MENÚ) */
 nav#subnav{position:sticky;top:80px;z-index:99;background:rgba(5,5,5,0.94);backdrop-filter:blur(20px);padding:12px 12px;display:none;justify-content:center;gap:8px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,0.04);}
 nav#subnav.show{display:flex;}
@@ -331,9 +334,7 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
   <div class="welcome">Bienvenidos a</div>
   <img class="logo-img" src="Logo.png" alt="Restful Restobar">
   <div class="tagline">Donde cada momento es especial</div>
-  <button class="enter-btn" id="enterBtn">Explorar Menú</button>
-  <button class="enter-btn rewards-btn" id="rewardsBtn" style="animation-delay:2.6s;margin-top:12px;border-color:rgba(197,165,90,0.55);color:#C5A55A;background:linear-gradient(135deg,rgba(197,165,90,0.08),rgba(212,185,110,0.06));">🎁 Mis Premios</button>
-  <button class="enter-btn rate-btn" id="rateBtn" style="animation-delay:3s;margin-top:12px;border-color:rgba(139,0,0,0.4);color:#B22222;">Califícanos</button>
+  <button class="enter-btn" id="enterBtn">Iniciar</button>
 </div>
 
 <div id="main">
@@ -349,6 +350,10 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
   <button class="pill" data-s="opina">
     <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
     OPINA
+  </button>
+  <button class="pill pill-gold" data-s="puntos">
+    <svg viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+    PREMIOS
   </button>
 </nav>
 <nav id="subnav" class="show">
@@ -515,9 +520,7 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
       <div class="evt-wd"><span>D</span><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span></div>
       <div class="evt-days" id="evt-days"></div>
       <div class="evt-legend">
-        <div class="evt-leg"><span class="evt-leg-dot"></span>Promo del día</div>
-        <div class="evt-leg"><span class="evt-leg-dot"></span>Karaoke</div>
-        <div class="evt-leg"><span class="evt-leg-dot"></span>Jueves de alitas</div>
+        <div class="evt-leg"><span class="evt-leg-dot"></span>DJ y Karaoke (sábados)</div>
         <div class="evt-leg"><span class="evt-leg-dot"></span>Evento especial</div>
       </div>
     </div>
@@ -682,11 +685,11 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
 <input type="hidden" id="mesera" value="">
 <div class="mesera-cards" id="meseraCards">
 <div class="mesera-card" data-mesera="Yudi Murillo">
-<div class="mesera-initial">Y</div>
+<img src="meseras/Judi.jpeg" alt="Yudi Murillo">
 <div class="mesera-name">Yudi Murillo</div>
 </div>
 <div class="mesera-card" data-mesera="Martina Romero">
-<div class="mesera-initial">M</div>
+<img src="meseras/Martina.jpeg" alt="Martina Romero">
 <div class="mesera-name">Martina Romero</div>
 </div>
 <div class="mesera-card" data-mesera="Fernanda Romero">
@@ -748,7 +751,8 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     },800);
   });
 
-  document.getElementById('rewardsBtn').addEventListener('click',function(){
+  var _rwb=document.getElementById('rewardsBtn');
+  if(_rwb) _rwb.addEventListener('click',function(){
     document.getElementById('splash').classList.add('gone');
     setTimeout(function(){
       document.getElementById('splash').style.display='none';
@@ -758,7 +762,8 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     },800);
   });
 
-  document.getElementById('rateBtn').addEventListener('click',function(){
+  var _rtb=document.getElementById('rateBtn');
+  if(_rtb) _rtb.addEventListener('click',function(){
     document.getElementById('splash').classList.add('gone');
     setTimeout(function(){
       document.getElementById('splash').style.display='none';
@@ -836,6 +841,12 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     }
     subnav.classList.remove('show');
     hideAll();
+    if(s==='puntos'){
+      var el=document.getElementById('puntos-w');
+      if(el){el.style.display='';void el.offsetWidth;el.classList.add('show');}
+      if(window.rfOpenPuntos) window.rfOpenPuntos();
+      return;
+    }
     var targetId=null;
     if(s==='eventos')targetId='eventos-w';
     else if(s==='opina')targetId='calificacion-w';
@@ -1374,19 +1385,12 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
 // ==================== MÓDULO EVENTOS / CALENDARIO ====================
 (function(){
   var EVENTS = {
-    '2026-05-06': [{titulo:'Miércoles de Costillas',descripcion:'3 platos de costillas premium a precio especial.',categoria:'Promo del día',precio:'2 X $30.00',extra:'en Costillas',hora:'19:00',icono:'🔥'}],
-    '2026-05-07': [{titulo:'Jueves de Alitas',descripcion:'Promo en todas las alitas durante toda la noche.',categoria:'Jueves de alitas',precio:'10 ALITAS $9',hora:'19:00',icono:'🍗'}],
-    '2026-05-08': [{titulo:'Karaoke Night',descripcion:'Sube al escenario y demuestra tu voz.',categoria:'Karaoke',hora:'21:00',icono:'🎤'},{titulo:'Happy Hour',descripcion:'2x1 en cócteles seleccionados.',categoria:'Promo del día',precio:'2X1',hora:'17:00-19:00',icono:'🍸'}],
-    '2026-05-13': [{titulo:'Miércoles de Costillas',descripcion:'3 platos de costillas premium a precio especial.',categoria:'Promo del día',precio:'2 X $30.00',extra:'en Costillas',hora:'19:00',icono:'🔥'}],
-    '2026-05-14': [{titulo:'Jueves de Alitas',descripcion:'Promo en todas las alitas durante toda la noche.',categoria:'Jueves de alitas',precio:'10 ALITAS $9',hora:'19:00',icono:'🍗'}],
-    '2026-05-15': [{titulo:'Karaoke Night',descripcion:'Sube al escenario y demuestra tu voz.',categoria:'Karaoke',hora:'21:00',icono:'🎤'},{titulo:'Happy Hour',descripcion:'2x1 en cócteles seleccionados.',categoria:'Promo del día',precio:'2X1',hora:'17:00-19:00',icono:'🍸'}],
+    '2026-05-02': [{titulo:'DJ y Karaoke',descripcion:'Música en vivo con DJ y noche de karaoke.',categoria:'Sábado',hora:'21:00',icono:'🎤'}],
+    '2026-05-09': [{titulo:'DJ y Karaoke',descripcion:'Música en vivo con DJ y noche de karaoke.',categoria:'Sábado',hora:'21:00',icono:'🎤'}],
+    '2026-05-16': [{titulo:'DJ y Karaoke',descripcion:'Música en vivo con DJ y noche de karaoke.',categoria:'Sábado',hora:'21:00',icono:'🎤'}],
     '2026-05-17': [{titulo:'Intercambio de Cromos',descripcion:'¿Todavía no encuentras a tu jugador favorito? Únete a nuestro intercambio de cromos Panini con Cristiano, Modrić, Messi y más.',categoria:'Evento especial',precio:'$14.99',extra:'Nachos + 4 Club Premium',hora:'16:00',icono:'⚽'}],
-    '2026-05-20': [{titulo:'Miércoles de Costillas',descripcion:'3 platos de costillas premium a precio especial.',categoria:'Promo del día',precio:'2 X $30.00',extra:'en Costillas',hora:'19:00',icono:'🔥'}],
-    '2026-05-21': [{titulo:'Jueves de Alitas',descripcion:'Promo en todas las alitas durante toda la noche.',categoria:'Jueves de alitas',precio:'10 ALITAS $9',hora:'19:00',icono:'🍗'}],
-    '2026-05-22': [{titulo:'Karaoke Night',descripcion:'Sube al escenario y demuestra tu voz.',categoria:'Karaoke',hora:'21:00',icono:'🎤'},{titulo:'Happy Hour',descripcion:'2x1 en cócteles seleccionados.',categoria:'Promo del día',precio:'2X1',hora:'17:00-19:00',icono:'🍸'}],
-    '2026-05-27': [{titulo:'Miércoles de Costillas',descripcion:'3 platos de costillas premium a precio especial.',categoria:'Promo del día',precio:'2 X $30.00',extra:'en Costillas',hora:'19:00',icono:'🔥'}],
-    '2026-05-28': [{titulo:'Jueves de Alitas',descripcion:'Promo en todas las alitas durante toda la noche.',categoria:'Jueves de alitas',precio:'10 ALITAS $9',hora:'19:00',icono:'🍗'}],
-    '2026-05-29': [{titulo:'Karaoke Night',descripcion:'Sube al escenario y demuestra tu voz.',categoria:'Karaoke',hora:'21:00',icono:'🎤'},{titulo:'Happy Hour',descripcion:'2x1 en cócteles seleccionados.',categoria:'Promo del día',precio:'2X1',hora:'17:00-19:00',icono:'🍸'}]
+    '2026-05-23': [{titulo:'DJ y Karaoke',descripcion:'Música en vivo con DJ y noche de karaoke.',categoria:'Sábado',hora:'21:00',icono:'🎤'}],
+    '2026-05-30': [{titulo:'DJ y Karaoke',descripcion:'Música en vivo con DJ y noche de karaoke.',categoria:'Sábado',hora:'21:00',icono:'🎤'}]
   };
   var MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   var DAYS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
@@ -1440,25 +1444,38 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     var time = ev.hora ? '<span class="evt-card-time">🕐 '+ev.hora+'</span>' : '';
     return '<div class="evt-card"><div class="evt-card-icon">'+(ev.icono||'🎉')+'</div><div class="evt-card-body"><h4>'+dp+ev.titulo+'</h4>'+(ev.descripcion?'<p>'+ev.descripcion+'</p>':'')+'<div class="evt-card-row">'+price+extra+time+'</div></div></div>';
   }
+  function renderCardWithDate(ev, dateObj){
+    var dayLbl = DAYS[dateObj.getDay()]+' '+dateObj.getDate();
+    var price = ev.precio ? '<span class="evt-card-price">'+ev.precio+'</span>' : '';
+    var extra = ev.extra ? '<span class="evt-card-cat">'+ev.extra+'</span>' : '';
+    var time = ev.hora ? '<span class="evt-card-time">🕐 '+ev.hora+'</span>' : '';
+    return '<div class="evt-card"><div class="evt-card-icon">'+(ev.icono||'🎉')+'</div><div class="evt-card-body"><h4><span style="color:#B22222;font-weight:700;font-size:0.78rem;letter-spacing:0.1em;display:block;text-transform:uppercase;margin-bottom:4px;">'+dayLbl+'</span>'+ev.titulo+'</h4>'+(ev.descripcion?'<p>'+ev.descripcion+'</p>':'')+'<div class="evt-card-row">'+price+extra+time+'</div></div></div>';
+  }
+  function getWeekEvents(){
+    var out = [];
+    for(var i=0;i<7;i++){
+      var d = new Date(today.getFullYear(), today.getMonth(), today.getDate()+i);
+      var k = key(d.getFullYear(), d.getMonth(), d.getDate());
+      if(EVENTS[k]){
+        EVENTS[k].forEach(function(ev){ out.push({date:d, ev:ev}); });
+      }
+    }
+    return out;
+  }
   function renderDetail(){
     if(!$('evt-list')) return;
     if(!sel){
-      $('evt-day-tag').textContent = MONTHS[curM].toUpperCase();
-      $('evt-day-title').textContent = MONTHS[curM]+' '+curY;
+      // Vista por defecto: "Esta semana"
+      $('evt-day-tag').textContent = 'PRÓXIMOS 7 DÍAS';
+      $('evt-day-title').textContent = 'Esta semana';
       $('evt-live-badge').style.display = 'none';
-      var keys = Object.keys(EVENTS).filter(function(kk){
-        var p = kk.split('-');
-        return parseInt(p[0])===curY && parseInt(p[1])-1===curM;
-      }).sort();
-      if(!keys.length){
-        $('evt-list').innerHTML = '<div class="evt-no">No hay eventos programados este mes.</div>';
+      var weekEvents = getWeekEvents();
+      if(!weekEvents.length){
+        $('evt-list').innerHTML = '<div class="evt-no">No hay eventos esta semana. Revisa el calendario.</div>';
       } else {
-        var html = '';
-        keys.forEach(function(kk){
-          var d = parseInt(kk.split('-')[2]);
-          EVENTS[kk].forEach(function(ev){ html += renderCard(ev, d); });
-        });
-        $('evt-list').innerHTML = html;
+        $('evt-list').innerHTML = weekEvents.map(function(item){
+          return renderCardWithDate(item.ev, item.date);
+        }).join('');
       }
       return;
     }
@@ -1476,10 +1493,19 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
       $('evt-list').innerHTML = evs.map(function(e){ return renderCard(e); }).join('');
     }
   }
+  function getNextEvent(){
+    // Busca el próximo evento desde hoy (hasta 60 días adelante)
+    for(var i=0;i<60;i++){
+      var d = new Date(today.getFullYear(), today.getMonth(), today.getDate()+i);
+      var k = key(d.getFullYear(), d.getMonth(), d.getDate());
+      if(EVENTS[k] && EVENTS[k].length){
+        return {date:d, ev:EVENTS[k][0], isToday:i===0};
+      }
+    }
+    return null;
+  }
   function initEvt(){
     if(!$('evt-days')) return;
-    var tk = key(today.getFullYear(),today.getMonth(),today.getDate());
-    if(EVENTS[tk]){ sel = tk; }
     renderCal();
     renderDetail();
     $('evt-prev').addEventListener('click', function(){
@@ -1490,10 +1516,26 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
       curM++; if(curM>11){curM=0;curY++;}
       sel=null; renderCal(); renderDetail();
     });
+    // Notif del próximo evento
     var notif = $('evt-notif');
     if(notif){
-      var hour = today.getHours();
-      if(hour>=17 && hour<19){
+      var next = getNextEvent();
+      if(next){
+        var icon = notif.querySelector('.evt-notif-icon');
+        var tag = notif.querySelector('.evt-notif-tag');
+        var ttl = notif.querySelector('.evt-notif-ttl');
+        var sub = notif.querySelector('.evt-notif-sub');
+        if(icon) icon.textContent = next.ev.icono || '🎉';
+        if(next.isToday){
+          if(tag) tag.textContent = 'HOY';
+          if(ttl) ttl.textContent = next.ev.titulo;
+          if(sub) sub.textContent = (next.ev.hora?next.ev.hora+' · ':'')+(next.ev.extra||next.ev.precio||next.ev.categoria||'');
+        } else {
+          var dayName = DAYS[next.date.getDay()];
+          if(tag) tag.textContent = 'PRÓXIMO EVENTO';
+          if(ttl) ttl.textContent = next.ev.titulo;
+          if(sub) sub.textContent = dayName+' '+next.date.getDate()+' · '+(next.ev.hora||'')+(next.ev.precio?' · '+next.ev.precio:'');
+        }
         setTimeout(function(){ notif.classList.add('show'); }, 1500);
       }
       $('evt-notif-close').addEventListener('click', function(){ notif.classList.remove('show'); });
