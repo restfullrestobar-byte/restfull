@@ -49,11 +49,14 @@ const CONFIG_DEFAULTS = [
   ['radio_metros','50','Radio en metros'],
   ['leaderboard_limit','10','Top N ranking'],
   ['version_api','2.2','Versión actual de la API'],
-  ['evolution_url','https://contabilidad-mateai-evolution-restfull.dtuoap.easypanel.host','URL Evolution API Restful Rewards'],
-  ['evolution_instance','RestFull-Rerwards','Instancia Evolution (Restful Rewards)'],
-  ['evolution_apikey','429683C4C977415CAAFCCE10F7D57E11','API Key Evolution (privada)'],
-  ['evolution_group_name','limpieza de exterior y barra','Nombre del grupo WhatsApp'],
-  ['evolution_group_jid','','JID del grupo (auto)'],
+  ['evolution_url','https://contabilidad-mateai-evolution-api.dtuoap.easypanel.host','URL Evolution API STAFF (grupo password diaria)'],
+  ['evolution_instance','mate-ai','Instancia Evolution STAFF (grupo)'],
+  ['evolution_apikey','429683C4C977415CAAFCCE10F7D57E11','API Key Evolution STAFF (privada)'],
+  ['evolution_group_name','limpieza de exterior y barra','Nombre del grupo WhatsApp del staff'],
+  ['evolution_group_jid','','JID del grupo staff (auto)'],
+  ['evolution_url_rewards','https://contabilidad-mateai-evolution-restfull.dtuoap.easypanel.host','URL Evolution API REWARDS (clientes 1-a-1)'],
+  ['evolution_instance_rewards','RestFull-Rerwards','Instancia Evolution REWARDS'],
+  ['evolution_apikey_rewards','429683C4C977415CAAFCCE10F7D57E11','API Key Evolution REWARDS (privada)'],
   ['weekly_report_emails','bryanligabow@gmail.com,frealejandroayala2001@gmail.com','Destinatarios informe semanal'],
   ['eventos_admin_token','restful-2026','Token para editar/notificar eventos (CAMBIAR)'],
   ['notify_test_phone','968429494','MODO PRUEBA: si está lleno, los eventos solo se notifican a este teléfono. Vaciar para enviar a todos los opt-in'],
@@ -193,12 +196,31 @@ function routeAction_(params, ip) {
 //  EVALUACIONES
 // ============================================================
 function handleEvaluacion_(data) {
+  // Anti-spam: rechazar envíos vacíos (bots, prefetch, llamadas sin contenido)
+  var mesera = String(data.mesera || '').trim();
+  var atencion = parseInt(data.atencion, 10) || 0;
+  var comida = parseInt(data.comida, 10) || 0;
+  if (!mesera && atencion === 0 && comida === 0) {
+    return ContentService.createTextOutput(JSON.stringify({status:'rejected', reason:'empty'}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  // Validación mínima: requiere mesera + al menos una calificación
+  if (!mesera || (atencion === 0 && comida === 0)) {
+    return ContentService.createTextOutput(JSON.stringify({status:'rejected', reason:'incomplete'}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+  // Calificaciones fuera de rango = bot
+  if (atencion < 0 || atencion > 5 || comida < 0 || comida > 5) {
+    return ContentService.createTextOutput(JSON.stringify({status:'rejected', reason:'invalid_rating'}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) { setup(); sheet = ss.getSheetByName(SHEET_NAME); }
   sheet.appendRow([
     data.fecha || new Date().toLocaleString('es', {timeZone:'America/Guayaquil'}),
-    data.mesera || '', data.atencion || 0, data.comida || 0,
+    mesera, atencion, comida,
     data.volveria || '', data.mesa || '', data.comentario || ''
   ]);
   sendPremiumEmail(data);
@@ -359,14 +381,14 @@ function sendWelcomeEmail_(nombre, email, cfg) {
   MailApp.sendEmail({ to: email, subject: subject, htmlBody: html });
 }
 
-// WhatsApp de bienvenida al registrarse en Rewards
+// WhatsApp de bienvenida al registrarse en Rewards (instancia Rewards)
 function sendWelcomeWhatsApp_(nombre, telefono, cfg) {
   try {
     cfg = cfg || readConfig();
-    var url = String(cfg.evolution_url || '').replace(/\/$/, '');
-    var instance = String(cfg.evolution_instance || '');
-    var apikey = String(cfg.evolution_apikey || '');
-    if (!url || !instance || !apikey || !telefono) return { ok:false, error:'Config Evolution o teléfono faltante' };
+    var url = String(cfg.evolution_url_rewards || cfg.evolution_url || '').replace(/\/$/, '');
+    var instance = String(cfg.evolution_instance_rewards || cfg.evolution_instance || '');
+    var apikey = String(cfg.evolution_apikey_rewards || cfg.evolution_apikey || '');
+    if (!url || !instance || !apikey || !telefono) return { ok:false, error:'Config Evolution Rewards o teléfono faltante' };
 
     var num = String(telefono).replace(/\D/g, '');
     if (num.indexOf('593') !== 0) num = '593' + num.replace(/^0+/, '');
@@ -894,13 +916,13 @@ function notifyEvent_(p) {
   };
 }
 
-// Manda mensaje WhatsApp del evento a un teléfono individual usando Evolution API
+// Manda mensaje WhatsApp del evento a un teléfono individual usando Evolution API (instancia Rewards)
 function sendEventWhatsApp_(telefono, nombre, ev, cfg) {
   try {
     cfg = cfg || readConfig();
-    var url = String(cfg.evolution_url || '').replace(/\/$/, '');
-    var instance = String(cfg.evolution_instance || '');
-    var apikey = String(cfg.evolution_apikey || '');
+    var url = String(cfg.evolution_url_rewards || cfg.evolution_url || '').replace(/\/$/, '');
+    var instance = String(cfg.evolution_instance_rewards || cfg.evolution_instance || '');
+    var apikey = String(cfg.evolution_apikey_rewards || cfg.evolution_apikey || '');
     if (!url || !instance || !apikey) return { ok:false, error:'Evolution no configurada' };
 
     // Normalizar teléfono y agregar código país Ecuador (593) si no lo tiene
