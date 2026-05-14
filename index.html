@@ -599,10 +599,6 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
           <input type="checkbox" id="pv-reg-acepto">
           <span>Acepto los <span class="pts-terms-link" id="pv-terms-link">términos y condiciones</span> y el tratamiento de mis datos personales.</span>
         </label>
-        <label class="pts-check">
-          <input type="checkbox" id="pv-reg-wa" checked>
-          <span>Quiero recibir promociones y avisos de eventos por <b style="color:#C5A55A;">correo / WhatsApp</b>.</span>
-        </label>
         <button class="pts-btn" id="pv-reg-btn">Registrarme</button>
         <div class="pts-err" id="pv-reg-err"></div>
         <div class="pts-link" data-goto="login">Ya tengo cuenta</div>
@@ -1347,7 +1343,6 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     var tel    = ($('pv-reg-tel').value||'').trim();
     var email  = ($('pv-reg-email').value||'').trim();
     var fnac   = ($('pv-reg-fnac') && $('pv-reg-fnac').value) ? $('pv-reg-fnac').value : '';
-    var waOpt  = $('pv-reg-wa') ? !!$('pv-reg-wa').checked : false;
     var acepto = $('pv-reg-acepto').checked;
     var err = $('pv-reg-err');
     err.textContent='';
@@ -1370,7 +1365,7 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
       telefono: tel,
       email: email,
       fecha_nacimiento: fnac,
-      whatsapp_optin: waOpt,
+      whatsapp_optin: true,
       acepto_terminos: true
     }).then(function(r){
       btn.disabled=false; btn.textContent='Registrarme';
