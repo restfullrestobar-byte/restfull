@@ -560,6 +560,18 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
           🔄 Solicitando acceso a tu ubicación…<br><span style="font-size:0.7rem;opacity:0.7;">Acepta el permiso del navegador</span>
         </div>
         <button class="pts-btn" id="pv-geo-btn" style="display:none;">Intentar de nuevo</button>
+        <button class="pts-btn secondary" id="pv-geo-help-btn" style="display:none;margin-top:10px;">🛠 Cómo activar el permiso</button>
+      </div>
+    </div>
+
+    <!-- Modal de ayuda para reactivar el permiso de ubicación -->
+    <div class="modal" id="pv-geo-help-modal">
+      <div class="modal-inner">
+        <h3>Activar acceso a ubicación</h3>
+        <p style="font-size:0.78rem;color:rgba(224,208,192,0.6);margin-bottom:14px;">Bloqueaste el permiso por error. Sigue estos pasos para reactivarlo según tu dispositivo:</p>
+        <div class="pv-geo-help-body" style="font-size:0.85rem;line-height:1.7;color:#E0D0C0;background:rgba(197,165,90,0.06);border:1px dashed rgba(197,165,90,0.25);border-radius:12px;padding:16px;"></div>
+        <p style="font-size:0.72rem;color:rgba(224,208,192,0.5);margin-top:14px;text-align:center;">Después de activarlo, <b style="color:#C5A55A;">recarga esta página</b> y vuelve a entrar a Mis Puntos.</p>
+        <button class="modal-close" id="pv-geo-help-close">Entendido</button>
       </div>
     </div>
 
@@ -1095,16 +1107,89 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   }
 
-  function renderGeoInfo(html, showRetry){
+  function renderGeoInfo(html, showRetry, showHelp){
     $('pv-geo-info').innerHTML = html;
     $('pv-geo-btn').style.display = showRetry ? 'block' : 'none';
+    var help = $('pv-geo-help-btn');
+    if (help) help.style.display = showHelp ? 'block' : 'none';
+  }
+
+  // Detecta el navegador para mostrar instrucciones específicas
+  function detectBrowser(){
+    var ua = navigator.userAgent;
+    var isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    var isAndroid = /Android/.test(ua);
+    var isChrome = /Chrome|CriOS/.test(ua) && !/Edge|Edg/.test(ua);
+    var isSafari = /Safari/.test(ua) && !/Chrome|CriOS|Android/.test(ua);
+    var isFirefox = /Firefox|FxiOS/.test(ua);
+    if (isIOS && isSafari) return 'ios-safari';
+    if (isIOS && isChrome) return 'ios-chrome';
+    if (isAndroid && isChrome) return 'android-chrome';
+    if (isFirefox) return 'firefox';
+    if (isChrome) return 'desktop-chrome';
+    if (isSafari) return 'desktop-safari';
+    return 'other';
+  }
+
+  // Muestra modal con instrucciones para reactivar el permiso de ubicación
+  function showGeoHelpModal(){
+    var modal = $('pv-geo-help-modal');
+    if (!modal) return;
+    var browser = detectBrowser();
+    var steps;
+    switch (browser) {
+      case 'ios-safari':
+        steps = '<b>iPhone — Safari:</b><br>1. Abre <b>Ajustes</b> del iPhone<br>2. Busca y entra a <b>Safari</b><br>3. Toca <b>Ubicación</b><br>4. Selecciona <b>Preguntar</b> o <b>Permitir</b><br>5. Vuelve aquí y recarga la página';
+        break;
+      case 'ios-chrome':
+        steps = '<b>iPhone — Chrome:</b><br>1. Abre <b>Ajustes</b> del iPhone<br>2. Baja y toca <b>Chrome</b><br>3. Toca <b>Ubicación</b><br>4. Selecciona <b>Preguntar</b> o <b>Permitir</b><br>5. Recarga esta página';
+        break;
+      case 'android-chrome':
+        steps = '<b>Android — Chrome:</b><br>1. Toca el <b>candado 🔒</b> a la izquierda de la URL<br>2. Toca <b>Permisos</b><br>3. Activa <b>Ubicación</b><br>4. Recarga la página<br><br>Si no aparece, ve a: <b>Ajustes del teléfono → Apps → Chrome → Permisos → Ubicación → Permitir</b>';
+        break;
+      case 'desktop-chrome':
+        steps = '<b>Chrome (computadora):</b><br>1. Click en el <b>candado 🔒</b> en la barra de direcciones<br>2. Click en <b>"Configuración de sitios"</b><br>3. Busca <b>Ubicación</b> y elige <b>Permitir</b><br>4. Recarga la página (F5)';
+        break;
+      case 'desktop-safari':
+        steps = '<b>Safari (Mac):</b><br>1. Menú <b>Safari → Ajustes</b><br>2. Pestaña <b>Sitios web</b><br>3. En el lateral, <b>Ubicación</b><br>4. Cambia este sitio a <b>Permitir</b><br>5. Recarga la página';
+        break;
+      case 'firefox':
+        steps = '<b>Firefox:</b><br>1. Click en el <b>candado 🔒</b> en la barra de direcciones<br>2. Click en la <b>X</b> junto a "Bloqueado temporalmente: Acceder a tu ubicación"<br>3. Recarga la página<br>4. Acepta el permiso esta vez';
+        break;
+      default:
+        steps = '<b>Pasos generales:</b><br>1. Busca el <b>candado 🔒</b> en la barra de direcciones<br>2. Abre los permisos del sitio<br>3. Cambia <b>Ubicación</b> a <b>Permitir</b><br>4. Recarga la página';
+    }
+    modal.querySelector('.pv-geo-help-body').innerHTML = steps;
+    modal.classList.add('show');
   }
 
   function requestGeo(){
-    renderGeoInfo('🔄 Solicitando acceso a tu ubicación…<br><span style="font-size:0.7rem;opacity:0.7;">Acepta el permiso del navegador</span>', false);
-    if (!navigator.geolocation) { renderGeoInfo('❌ Tu navegador no soporta geolocalización.', false); return; }
-    if (!CONFIG || !CONFIG.restaurante_lat) { renderGeoInfo('⚙️ Configuración no disponible. Intenta de nuevo.', true); return; }
+    renderGeoInfo('🔄 Solicitando acceso a tu ubicación…<br><span style="font-size:0.7rem;opacity:0.7;">Acepta el permiso del navegador</span>', false, false);
+    if (!navigator.geolocation) { renderGeoInfo('❌ Tu navegador no soporta geolocalización.', false, false); return; }
+    if (!CONFIG || !CONFIG.restaurante_lat) { renderGeoInfo('⚙️ Configuración no disponible. Intenta de nuevo.', true, false); return; }
 
+    // Verificar estado del permiso ANTES de pedir (si está disponible)
+    if (navigator.permissions && navigator.permissions.query) {
+      navigator.permissions.query({ name: 'geolocation' }).then(function(result){
+        if (result.state === 'denied') {
+          // Permiso ya bloqueado — el browser NO mostrará el popup. Hay que dar instrucciones.
+          renderGeoInfo(
+            '🔒 <b>Acceso a ubicación bloqueado</b><br>' +
+            '<span style="font-size:0.78rem;">Bloqueaste el permiso anteriormente. Tu navegador no mostrará el pedido de nuevo automáticamente.</span><br><br>' +
+            '<span style="font-size:0.75rem;color:#C5A55A;">👇 Toca el botón de ayuda para ver cómo reactivarlo</span>',
+            true, true
+          );
+          return;
+        }
+        // prompt o granted → seguir con el flujo normal
+        doGeoRequest();
+      }).catch(function(){ doGeoRequest(); });
+    } else {
+      doGeoRequest();
+    }
+  }
+
+  function doGeoRequest(){
     navigator.geolocation.getCurrentPosition(function(pos){
       var d = haversineMeters(pos.coords.latitude, pos.coords.longitude, CONFIG.restaurante_lat, CONFIG.restaurante_lng);
       var radio = CONFIG.radio_metros || 50;
@@ -1119,14 +1204,22 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
         } else { showView('login'); }
       } else {
         geoOk = false;
-        renderGeoInfo('🚫 <b>Estás fuera del restaurante.</b><br><span style="font-size:0.75rem;">Distancia aproximada: <b>' + Math.round(d) + ' m</b> — máximo permitido: ' + radio + ' m</span><br><span style="font-size:0.7rem;opacity:0.7;margin-top:8px;display:block;">Acércate al restaurante para continuar.</span>', true);
+        renderGeoInfo('🚫 <b>Estás fuera del restaurante.</b><br><span style="font-size:0.75rem;">Distancia aproximada: <b>' + Math.round(d) + ' m</b> — máximo permitido: ' + radio + ' m</span><br><span style="font-size:0.7rem;opacity:0.7;margin-top:8px;display:block;">Acércate al restaurante para continuar.</span>', true, false);
       }
     }, function(err){
-      var msg = '❌ No pudimos obtener tu ubicación. ';
-      if (err.code === 1) msg += '<br><span style="font-size:0.75rem;">Debes <b>permitir el acceso a la ubicación</b> en tu navegador.</span>';
-      else if (err.code === 2) msg += '<br><span style="font-size:0.75rem;">Ubicación no disponible. Verifica tu GPS.</span>';
-      else if (err.code === 3) msg += '<br><span style="font-size:0.75rem;">Tiempo agotado. Intenta de nuevo.</span>';
-      renderGeoInfo(msg, true);
+      var msg = '';
+      var showHelp = false;
+      if (err.code === 1) {
+        msg = '🔒 <b>Permiso de ubicación denegado</b><br><span style="font-size:0.78rem;">Necesitamos tu ubicación para validar que estás en el restaurante.</span><br><br><span style="font-size:0.72rem;color:#C5A55A;">👇 Si el cuadro no aparece, toca el botón de ayuda</span>';
+        showHelp = true;
+      } else if (err.code === 2) {
+        msg = '📍 <b>Ubicación no disponible.</b><br><span style="font-size:0.75rem;">Verifica que tu GPS esté activado.</span>';
+      } else if (err.code === 3) {
+        msg = '⏱ <b>Tiempo agotado.</b><br><span style="font-size:0.75rem;">El GPS tardó demasiado en responder. Intenta de nuevo.</span>';
+      } else {
+        msg = '❌ No pudimos obtener tu ubicación.';
+      }
+      renderGeoInfo(msg, true, showHelp);
     }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 });
   }
 
@@ -1231,6 +1324,9 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
   };
 
   $('pv-geo-btn').addEventListener('click', requestGeo);
+  var _ghb = $('pv-geo-help-btn'); if (_ghb) _ghb.addEventListener('click', showGeoHelpModal);
+  var _ghc = $('pv-geo-help-close'); if (_ghc) _ghc.addEventListener('click', function(){ $('pv-geo-help-modal').classList.remove('show'); });
+  var _ghm = $('pv-geo-help-modal'); if (_ghm) _ghm.addEventListener('click', function(e){ if(e.target===this) this.classList.remove('show'); });
 
   $('pv-login-btn').addEventListener('click', function(){
     var tel = ($('pv-login-tel').value||'').trim();
