@@ -49,14 +49,14 @@ const CONFIG_DEFAULTS = [
   ['radio_metros','50','Radio en metros'],
   ['leaderboard_limit','10','Top N ranking'],
   ['version_api','2.2','Versión actual de la API'],
-  ['evolution_url','https://contabilidad-mateai-evolution-api.dtuoap.easypanel.host','URL Evolution API STAFF (grupo password diaria)'],
-  ['evolution_instance','mate-ai','Instancia Evolution STAFF (grupo)'],
-  ['evolution_apikey','429683C4C977415CAAFCCE10F7D57E11','API Key Evolution STAFF (privada)'],
+  ['evolution_url','https://contabilidad-mateai-evolution-restfull.dtuoap.easypanel.host','URL Evolution API REWARDS (clientes / eventos / bienvenida)'],
+  ['evolution_instance','RestFull-Rerwards','Instancia Evolution REWARDS'],
+  ['evolution_apikey','429683C4C977415CAAFCCE10F7D57E11','API Key Evolution REWARDS (privada)'],
   ['evolution_group_name','limpieza de exterior y barra','Nombre del grupo WhatsApp del staff'],
   ['evolution_group_jid','','JID del grupo staff (auto)'],
-  ['evolution_url_rewards','https://contabilidad-mateai-evolution-restfull.dtuoap.easypanel.host','URL Evolution API REWARDS (clientes 1-a-1)'],
-  ['evolution_instance_rewards','RestFull-Rerwards','Instancia Evolution REWARDS'],
-  ['evolution_apikey_rewards','429683C4C977415CAAFCCE10F7D57E11','API Key Evolution REWARDS (privada)'],
+  ['evolution_url_staff','https://contabilidad-mateai-evolution-api.dtuoap.easypanel.host','URL Evolution API STAFF (mate-ai, grupo password)'],
+  ['evolution_instance_staff','mate-ai','Instancia Evolution STAFF (grupo password)'],
+  ['evolution_apikey_staff','429683C4C977415CAAFCCE10F7D57E11','API Key Evolution STAFF (privada)'],
   ['weekly_report_emails','bryanligabow@gmail.com,frealejandroayala2001@gmail.com','Destinatarios informe semanal'],
   ['eventos_admin_token','restful-2026','Token para editar/notificar eventos (CAMBIAR)'],
   ['notify_test_phone','968429494','MODO PRUEBA: si está lleno, los eventos solo se notifican a este teléfono. Vaciar para enviar a todos los opt-in'],
@@ -385,9 +385,9 @@ function sendWelcomeEmail_(nombre, email, cfg) {
 function sendWelcomeWhatsApp_(nombre, telefono, cfg) {
   try {
     cfg = cfg || readConfig();
-    var url = String(cfg.evolution_url_rewards || cfg.evolution_url || '').replace(/\/$/, '');
-    var instance = String(cfg.evolution_instance_rewards || cfg.evolution_instance || '');
-    var apikey = String(cfg.evolution_apikey_rewards || cfg.evolution_apikey || '');
+    var url = String(cfg.evolution_url || '').replace(/\/$/, '');
+    var instance = String(cfg.evolution_instance || '');
+    var apikey = String(cfg.evolution_apikey || '');
     if (!url || !instance || !apikey || !telefono) return { ok:false, error:'Config Evolution Rewards o teléfono faltante' };
 
     var num = String(telefono).replace(/\D/g, '');
@@ -920,9 +920,9 @@ function notifyEvent_(p) {
 function sendEventWhatsApp_(telefono, nombre, ev, cfg) {
   try {
     cfg = cfg || readConfig();
-    var url = String(cfg.evolution_url_rewards || cfg.evolution_url || '').replace(/\/$/, '');
-    var instance = String(cfg.evolution_instance_rewards || cfg.evolution_instance || '');
-    var apikey = String(cfg.evolution_apikey_rewards || cfg.evolution_apikey || '');
+    var url = String(cfg.evolution_url || '').replace(/\/$/, '');
+    var instance = String(cfg.evolution_instance || '');
+    var apikey = String(cfg.evolution_apikey || '');
     if (!url || !instance || !apikey) return { ok:false, error:'Evolution no configurada' };
 
     // Normalizar teléfono y agregar código país Ecuador (593) si no lo tiene
@@ -1170,17 +1170,37 @@ function weeklyBackupJob() {
 // ============================================================
 function sendDailyPasswordWhatsApp_(pwd, cfg) {
   try {
-    var url = String(cfg.evolution_url || '').replace(/\/$/, '');
-    var instance = String(cfg.evolution_instance || '');
-    var apikey = String(cfg.evolution_apikey || '');
+    cfg = cfg || readConfig();
+    // STAFF group → usa instancia mate-ai (evolution_url_staff)
+    var url = String(cfg.evolution_url_staff || cfg.evolution_url || '').replace(/\/$/, '');
+    var instance = String(cfg.evolution_instance_staff || cfg.evolution_instance || '');
+    var apikey = String(cfg.evolution_apikey_staff || cfg.evolution_apikey || '');
     var jid = String(cfg.evolution_group_jid || '');
-    if (!url || !instance || !apikey || !jid) return;
-    UrlFetchApp.fetch(url + '/message/sendText/' + encodeURIComponent(instance), {
+    if (!url || !instance || !apikey || !jid) {
+      console.log('⚠️ Staff WA no configurado completamente. URL='+url+' inst='+instance+' jid='+jid);
+      return { ok:false, error:'staff config incompleta' };
+    }
+    var fecha = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd/MM/yyyy');
+    var msg = '🔐 *Contraseña del día — Restful Restobar*\n📅 ' + fecha + '\n\nLa contraseña de HOY es:\n\n*' + pwd + '*\n\n_Comparte solo con el equipo. Expira a las 23:59._';
+    var res = UrlFetchApp.fetch(url + '/message/sendText/' + encodeURIComponent(instance), {
       method:'post', contentType:'application/json', headers:{'apikey':apikey},
-      payload: JSON.stringify({ number: jid, text: '🔐 *Password del día Restful Restobar*\n\n*' + pwd + '*' }),
+      payload: JSON.stringify({ number: jid, text: msg }),
       muteHttpExceptions:true
     });
-  } catch (e) { console.log('wa err: ' + e); }
+    var code = res.getResponseCode();
+    if (code >= 200 && code < 300) return { ok:true, status: code };
+    console.log('Staff WA status ' + code + ': ' + res.getContentText());
+    return { ok:false, status: code, error: res.getContentText() };
+  } catch (e) { console.log('staff wa err: ' + e); return { ok:false, error: String(e) }; }
+}
+
+// Prueba manual del envío del password al grupo del staff
+function testStaffPasswordWhatsApp() {
+  var cfg = readConfig();
+  var pwd = generate6DigitPassword();
+  var r = sendDailyPasswordWhatsApp_(pwd, cfg);
+  Logger.log('Password prueba: ' + pwd);
+  Logger.log(JSON.stringify(r, null, 2));
 }
 
 // ============================================================
