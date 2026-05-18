@@ -13,7 +13,8 @@ var LOGO_URL   = 'https://drive.google.com/uc?export=view&id=16wwiJdF9G2-EdVCj9w
 const SHEETS = {
   CLIENTES:'Clientes', TRANSACC:'Transacciones', CANJES:'Canjes',
   PASSWORDS:'Passwords_Diarias', CONFIG:'Configuracion', LOG_FAIL:'Intentos_Fallidos',
-  RECOMPENSAS:'Recompensas', WEBHOOKS:'Webhooks', IDEMPOTENCY:'Idempotency', EVENTOS:'Eventos'
+  RECOMPENSAS:'Recompensas', WEBHOOKS:'Webhooks', IDEMPOTENCY:'Idempotency', EVENTOS:'Eventos',
+  NOTIF_COLA:'NotificacionesCola'
 };
 
 const HEADERS = {
@@ -26,7 +27,8 @@ const HEADERS = {
   [SHEETS.RECOMPENSAS]: ['id','nombre','descripcion','costo_pts','nivel_minimo','stock','activo','imagen_url'],
   [SHEETS.WEBHOOKS]:    ['evento','url','activo','descripcion'],
   [SHEETS.IDEMPOTENCY]: ['key','fecha','accion','resultado'],
-  [SHEETS.EVENTOS]:     ['id','tipo','dia_semana','fecha','titulo','subtitulo','hora_inicio','hora_fin','icon','color','active','notificado']
+  [SHEETS.EVENTOS]:     ['id','tipo','dia_semana','fecha','titulo','subtitulo','hora_inicio','hora_fin','icon','color','active','notificado'],
+  [SHEETS.NOTIF_COLA]:  ['id','evento_id','telefono','email','nombre','canal','estado','fecha_creado','fecha_enviado','error','intentos']
 };
 
 const CONFIG_DEFAULTS = [
@@ -60,7 +62,11 @@ const CONFIG_DEFAULTS = [
   ['weekly_report_emails','bryanligabow@gmail.com,frealejandroayala2001@gmail.com','Destinatarios informe semanal'],
   ['eventos_admin_token','restful-2026','Token para editar/notificar eventos (CAMBIAR)'],
   ['notify_test_phone','968429494','MODO PRUEBA: si está lleno, los eventos solo se notifican a este teléfono. Vaciar para enviar a todos los opt-in'],
-  ['notify_channels','both','Canales de notificación de eventos: email | whatsapp | both']
+  ['notify_channels','both','Canales de notificación de eventos: email | whatsapp | both'],
+  ['notify_batch_size','10','ANTIBANEO: cuántos mensajes WhatsApp procesar por ejecución (recomendado 8-10)'],
+  ['notify_delay_min_sec','6','ANTIBANEO: delay mínimo aleatorio entre mensajes WhatsApp (seg)'],
+  ['notify_delay_max_sec','12','ANTIBANEO: delay máximo aleatorio entre mensajes WhatsApp (seg)'],
+  ['notify_daily_limit','500','ANTIBANEO: tope máximo de WhatsApps a clientes por día (0 = sin tope)']
 ];
 
 const REWARDS_DEFAULTS = [
@@ -893,16 +899,48 @@ function notifyEvent_(p) {
   }
   if (!dest.length) return { ok:false, error: testPhone ? 'No se encontró el teléfono de prueba ('+testPhone+') en Clientes' : 'No hay clientes con opt-in' };
 
-  var emailSent = 0, emailFail = 0, waSent = 0, waFail = 0;
-  dest.forEach(function(d){
-    if (sendEmail && d.email && d.email.indexOf('@') !== -1) {
-      try { sendEventEmail_(d.email, d.nombre, event, cfg); emailSent++; } catch (e) { emailFail++; console.log('email err: ' + e); }
+  // -------- EMAILS: se envían inmediatamente (no requieren anti-baneo) --------
+  var emailSent = 0, emailFail = 0;
+  if (sendEmail) {
+    dest.forEach(function(d){
+      if (d.email && d.email.indexOf('@') !== -1) {
+        try { sendEventEmail_(d.email, d.nombre, event, cfg); emailSent++; }
+        catch (e) { emailFail++; console.log('email err: ' + e); }
+      }
+    });
+  }
+
+  // -------- WHATSAPP: se ENCOLAN para procesarlos con delay anti-baneo --------
+  var encolados = 0;
+  if (sendWa) {
+    var colaSh = ss.getSheetByName(SHEETS.NOTIF_COLA);
+    if (!colaSh) colaSh = ss.insertSheet(SHEETS.NOTIF_COLA);
+    if (colaSh.getLastRow() === 0) {
+      colaSh.getRange(1, 1, 1, HEADERS[SHEETS.NOTIF_COLA].length).setValues([HEADERS[SHEETS.NOTIF_COLA]])
+        .setFontWeight('bold').setBackground('#1a1a1a').setFontColor('#C5A55A');
+      colaSh.setFrozenRows(1);
     }
-    if (sendWa && d.telefono) {
-      var r = sendEventWhatsApp_(d.telefono, d.nombre, event, cfg);
-      if (r && r.ok) waSent++; else waFail++;
+    var rows = [];
+    dest.forEach(function(d){
+      if (d.telefono) {
+        rows.push([
+          Utilities.getUuid().substring(0, 8),
+          event.id,
+          String(d.telefono),
+          String(d.email || ''),
+          String(d.nombre || ''),
+          'whatsapp',
+          'pending',
+          new Date(),
+          '', '', 0
+        ]);
+      }
+    });
+    if (rows.length) {
+      colaSh.getRange(colaSh.getLastRow() + 1, 1, rows.length, rows[0].length).setValues(rows);
+      encolados = rows.length;
     }
-  });
+  }
 
   sh.getRange(eventRow, H.indexOf('notificado') + 1).setValue('TRUE');
   return {
@@ -912,8 +950,167 @@ function notifyEvent_(p) {
     test_phone: testPhone || null,
     total_destinatarios: dest.length,
     email: { enviados: emailSent, fallidos: emailFail },
-    whatsapp: { enviados: waSent, fallidos: waFail }
+    whatsapp: { encolados: encolados, info: 'Se enviarán por lotes con anti-baneo (ver processNotificationQueue)' }
   };
+}
+
+// ============================================================
+//  COLA DE NOTIFICACIONES WHATSAPP — ANTI-BANEO
+// ============================================================
+// Procesa la cola NotificacionesCola con delays aleatorios entre mensajes.
+// Se ejecuta automáticamente cada minuto por trigger (installQueueTrigger).
+function processNotificationQueue() {
+  var lock = LockService.getScriptLock();
+  if (!lock.tryLock(2000)) { console.log('queue: lock ocupado, salto'); return { ok:true, skipped:true }; }
+  try {
+    var cfg = readConfig();
+    var ss = SpreadsheetApp.getActive();
+    var sh = ss.getSheetByName(SHEETS.NOTIF_COLA);
+    if (!sh || sh.getLastRow() < 2) return { ok:true, enviados:0, info:'cola vacía' };
+
+    var data = sh.getDataRange().getValues();
+    var H = HEADERS[SHEETS.NOTIF_COLA];
+    var iEstado = H.indexOf('estado');
+    var iEnviado = H.indexOf('fecha_enviado');
+    var iError = H.indexOf('error');
+    var iIntentos = H.indexOf('intentos');
+    var iCanal = H.indexOf('canal');
+    var iTel = H.indexOf('telefono');
+    var iEmail = H.indexOf('email');
+    var iNombre = H.indexOf('nombre');
+    var iEventoId = H.indexOf('evento_id');
+
+    var BATCH_SIZE = Math.max(1, Number(cfg.notify_batch_size || 10));
+    var DELAY_MIN = Math.max(0, Number(cfg.notify_delay_min_sec || 6));
+    var DELAY_MAX = Math.max(DELAY_MIN, Number(cfg.notify_delay_max_sec || 12));
+    var DAILY_LIMIT = Number(cfg.notify_daily_limit || 0);
+    var MAX_RUNTIME_MS = 4.5 * 60 * 1000;   // safety vs timeout Apps Script (6 min)
+    var startTime = Date.now();
+
+    // Contar enviados hoy para respetar el tope diario
+    var hoy = todayISO();
+    var tz = Session.getScriptTimeZone();
+    var enviadosHoy = 0;
+    if (DAILY_LIMIT > 0) {
+      for (var i = 1; i < data.length; i++) {
+        var fe = data[i][iEnviado];
+        if (data[i][iEstado] === 'enviado' && fe) {
+          var feDate = (fe instanceof Date) ? Utilities.formatDate(fe, tz, 'yyyy-MM-dd') : String(fe).substring(0, 10);
+          if (feDate === hoy) enviadosHoy++;
+        }
+      }
+    }
+
+    // Cargar eventos en memoria (para no reabrir la hoja por cada mensaje)
+    var evtData = ss.getSheetByName(SHEETS.EVENTOS).getDataRange().getValues();
+    var Hevt = HEADERS[SHEETS.EVENTOS];
+    var eventosCache = {};
+    for (var e = 1; e < evtData.length; e++) {
+      var evObj = {};
+      Hevt.forEach(function(k, j){ evObj[k] = evtData[e][j]; });
+      if (evObj.fecha instanceof Date) evObj.fecha = Utilities.formatDate(evObj.fecha, tz, 'yyyy-MM-dd');
+      eventosCache[String(evObj.id)] = evObj;
+    }
+
+    var enviadosBatch = 0, fallosBatch = 0;
+    for (var r = 1; r < data.length; r++) {
+      if (enviadosBatch >= BATCH_SIZE) break;
+      if (Date.now() - startTime > MAX_RUNTIME_MS) break;
+      if (DAILY_LIMIT > 0 && enviadosHoy >= DAILY_LIMIT) {
+        console.log('queue: tope diario alcanzado ('+DAILY_LIMIT+')');
+        break;
+      }
+      var estado = data[r][iEstado];
+      if (estado !== 'pending') continue;
+
+      var canal = data[r][iCanal];
+      var telefono = data[r][iTel];
+      var nombre = data[r][iNombre];
+      var eventoId = String(data[r][iEventoId]);
+      var ev = eventosCache[eventoId];
+      var rowNum = r + 1;
+
+      if (!ev) {
+        sh.getRange(rowNum, iEstado + 1).setValue('error');
+        sh.getRange(rowNum, iError + 1).setValue('evento no encontrado');
+        continue;
+      }
+
+      var result;
+      try {
+        if (canal === 'whatsapp') {
+          result = sendEventWhatsApp_(telefono, nombre, ev, cfg);
+        } else if (canal === 'email') {
+          sendEventEmail_(data[r][iEmail], nombre, ev, cfg);
+          result = { ok: true };
+        } else {
+          result = { ok: false, error: 'canal desconocido: ' + canal };
+        }
+      } catch (err) {
+        result = { ok: false, error: String(err) };
+      }
+
+      if (result && result.ok) {
+        sh.getRange(rowNum, iEstado + 1).setValue('enviado');
+        sh.getRange(rowNum, iEnviado + 1).setValue(new Date());
+        enviadosBatch++;
+        enviadosHoy++;
+      } else {
+        var intentos = Number(data[r][iIntentos] || 0) + 1;
+        sh.getRange(rowNum, iIntentos + 1).setValue(intentos);
+        sh.getRange(rowNum, iError + 1).setValue(JSON.stringify(result || {}));
+        if (intentos >= 3) {
+          sh.getRange(rowNum, iEstado + 1).setValue('error');
+        }
+        fallosBatch++;
+      }
+
+      // Delay aleatorio antes del SIGUIENTE mensaje (anti-baneo)
+      if (enviadosBatch < BATCH_SIZE) {
+        var delaySec = DELAY_MIN + Math.floor(Math.random() * (DELAY_MAX - DELAY_MIN + 1));
+        Utilities.sleep(delaySec * 1000);
+      }
+    }
+
+    console.log('queue: enviados=' + enviadosBatch + ' fallos=' + fallosBatch + ' hoy=' + enviadosHoy);
+    return { ok:true, enviados: enviadosBatch, fallos: fallosBatch, enviadosHoy: enviadosHoy };
+  } catch (err) {
+    console.log('queue ERROR: ' + err);
+    return { ok:false, error: String(err) };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// Test manual: procesa la cola de inmediato sin esperar al cron
+function testProcessQueue() {
+  var r = processNotificationQueue();
+  Logger.log(JSON.stringify(r, null, 2));
+}
+
+// Estado de la cola: cuántos pending/enviado/error
+function queueStatus() {
+  var sh = SpreadsheetApp.getActive().getSheetByName(SHEETS.NOTIF_COLA);
+  if (!sh || sh.getLastRow() < 2) return { ok:true, total:0 };
+  var data = sh.getDataRange().getValues();
+  var H = HEADERS[SHEETS.NOTIF_COLA];
+  var iEstado = H.indexOf('estado');
+  var counts = { pending:0, enviado:0, error:0, otros:0 };
+  for (var i = 1; i < data.length; i++) {
+    var e = String(data[i][iEstado] || '');
+    if (counts.hasOwnProperty(e)) counts[e]++; else counts.otros++;
+  }
+  Logger.log(JSON.stringify(counts, null, 2));
+  return counts;
+}
+
+// Instala/refresca el trigger que procesa la cola cada minuto
+function installQueueTrigger() {
+  ScriptApp.getProjectTriggers().forEach(function(t){
+    if (t.getHandlerFunction() === 'processNotificationQueue') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('processNotificationQueue').timeBased().everyMinutes(1).create();
+  try { SpreadsheetApp.getUi().alert('✅ Cola procesándose cada minuto.'); } catch(_){}
 }
 
 // Manda mensaje WhatsApp del evento a un teléfono individual usando Evolution API (instancia Rewards)
@@ -1325,18 +1522,16 @@ function cleanupDuplicateTriggers() {
 
 // Instala TODOS los triggers automáticos en un solo paso
 function installAllTriggers() {
-  // limpiar primero todo
+  var TRIGGERS_TO_RESET = ['dailyPasswordJob','weeklyBackupJob','monthlyCleanupJob','weeklyReportJob','onEditEventos','processNotificationQueue'];
   ScriptApp.getProjectTriggers().forEach(function(t){
     var fn = t.getHandlerFunction();
-    if (['dailyPasswordJob','weeklyBackupJob','monthlyCleanupJob','weeklyReportJob','onEditEventos'].indexOf(fn) !== -1) {
-      ScriptApp.deleteTrigger(t);
-    }
+    if (TRIGGERS_TO_RESET.indexOf(fn) !== -1) ScriptApp.deleteTrigger(t);
   });
   ScriptApp.newTrigger('dailyPasswordJob').timeBased().atHour(6).everyDays(1).create();
   ScriptApp.newTrigger('weeklyBackupJob').timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).atHour(2).create();
   ScriptApp.newTrigger('monthlyCleanupJob').timeBased().onMonthDay(1).atHour(3).create();
   ScriptApp.newTrigger('weeklyReportJob').timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).atHour(8).create();
-  // onEditEventos requiere ScriptApp.newTrigger().forSpreadsheet().onEdit()
+  ScriptApp.newTrigger('processNotificationQueue').timeBased().everyMinutes(1).create();
   var ss = SpreadsheetApp.getActive();
   ScriptApp.newTrigger('onEditEventos').forSpreadsheet(ss).onEdit().create();
   try {
@@ -1346,6 +1541,7 @@ function installAllTriggers() {
       '• weeklyBackupJob → lunes 2:00 AM\n' +
       '• monthlyCleanupJob → día 1 de cada mes 3:00 AM\n' +
       '• weeklyReportJob → lunes 8:00 AM\n' +
+      '• processNotificationQueue → cada 1 min (anti-baneo WhatsApp)\n' +
       '• onEditEventos → al editar el sheet'
     );
   } catch(_) {}
