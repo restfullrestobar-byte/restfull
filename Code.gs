@@ -122,13 +122,13 @@ function setup() {
     evt.getRange(2, 2, EVENTOS_DEFAULTS.length, 1).setNumberFormat('@');
   }
 
-  SpreadsheetApp.getUi().alert('✅ Setup v2.2 completo.');
+  try { SpreadsheetApp.getUi().alert('✅ Setup v2.2 completo.'); } catch(_) { console.log('✅ Setup v2.2 completo.'); }
 }
 
 function installTrigger() {
   ScriptApp.getProjectTriggers().forEach(function(t){ if (t.getHandlerFunction() === 'dailyPasswordJob') ScriptApp.deleteTrigger(t); });
   ScriptApp.newTrigger('dailyPasswordJob').timeBased().atHour(6).everyDays(1).create();
-  SpreadsheetApp.getUi().alert('✅ Trigger 6:00 AM instalado.');
+  try { SpreadsheetApp.getUi().alert('✅ Trigger 6:00 AM instalado.'); } catch(_) { console.log('✅ Trigger 6:00 AM instalado.'); }
 }
 
 function installMaintenanceTriggers() {
@@ -138,7 +138,7 @@ function installMaintenanceTriggers() {
   });
   ScriptApp.newTrigger('monthlyCleanupJob').timeBased().onMonthDay(1).atHour(3).create();
   ScriptApp.newTrigger('weeklyBackupJob').timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).atHour(2).create();
-  SpreadsheetApp.getUi().alert('✅ Triggers de mantenimiento instalados.');
+  try { SpreadsheetApp.getUi().alert('✅ Triggers de mantenimiento instalados.'); } catch(_) { console.log('✅ Triggers de mantenimiento instalados.'); }
 }
 
 function installWeeklyReportTrigger() {
