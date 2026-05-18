@@ -1166,12 +1166,198 @@ function weeklyBackupJob() {
 }
 
 // ============================================================
+//  INFORME SEMANAL — al grupo del staff (lunes 8:00 AM)
+// ============================================================
+function weeklyReportJob() {
+  try {
+    var cfg = readConfig();
+    var tz = Session.getScriptTimeZone();
+    var now = new Date();
+    var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    // ----- Clientes nuevos en la última semana -----
+    var shC = SpreadsheetApp.getActive().getSheetByName(SHEETS.CLIENTES);
+    var dataC = shC.getDataRange().getValues();
+    var Hc = HEADERS[SHEETS.CLIENTES];
+    var iFecha = Hc.indexOf('fecha_registro');
+    var iNombre = Hc.indexOf('nombre');
+    var iTel = Hc.indexOf('telefono');
+    var iPts = Hc.indexOf('puntos_actuales');
+    var iOptin = Hc.indexOf('whatsapp_optin');
+
+    var nuevos = [];
+    var totalClientes = 0;
+    var totalOptin = 0;
+    var totalPuntosActivos = 0;
+    for (var i = 1; i < dataC.length; i++) {
+      var nombre = String(dataC[i][iNombre] || '').trim();
+      if (!nombre) continue;
+      totalClientes++;
+      if (truthy_(dataC[i][iOptin])) totalOptin++;
+      totalPuntosActivos += Number(dataC[i][iPts] || 0);
+      var fr = dataC[i][iFecha];
+      var frDate = (fr instanceof Date) ? fr : new Date(fr);
+      if (!isNaN(frDate.getTime()) && frDate.getTime() >= weekAgo.getTime()) {
+        nuevos.push({
+          nombre: nombre,
+          telefono: String(dataC[i][iTel] || ''),
+          fecha: Utilities.formatDate(frDate, tz, 'dd/MM HH:mm')
+        });
+      }
+    }
+
+    // ----- Canjes en la última semana -----
+    var canjesCount = 0;
+    var canjesDetalle = {};
+    try {
+      var shCanj = SpreadsheetApp.getActive().getSheetByName(SHEETS.CANJES);
+      if (shCanj && shCanj.getLastRow() > 1) {
+        var dC = shCanj.getDataRange().getValues();
+        var Hcan = HEADERS[SHEETS.CANJES];
+        var jFecha = Hcan.indexOf('fecha');
+        var jNombre = Hcan.indexOf('recompensa_nombre');
+        for (var j = 1; j < dC.length; j++) {
+          var fc = dC[j][jFecha];
+          var fcDate = (fc instanceof Date) ? fc : new Date(fc);
+          if (!isNaN(fcDate.getTime()) && fcDate.getTime() >= weekAgo.getTime()) {
+            canjesCount++;
+            var rn = String(dC[j][jNombre] || 'Premio');
+            canjesDetalle[rn] = (canjesDetalle[rn] || 0) + 1;
+          }
+        }
+      }
+    } catch (_) {}
+
+    // ----- Acumulaciones (visitas) en la última semana -----
+    var visitas = 0;
+    var puntosEntregados = 0;
+    try {
+      var shT = SpreadsheetApp.getActive().getSheetByName(SHEETS.TRANSACC);
+      if (shT && shT.getLastRow() > 1) {
+        var dT = shT.getDataRange().getValues();
+        var Ht = HEADERS[SHEETS.TRANSACC];
+        var tFecha = Ht.indexOf('fecha_hora');
+        var tPts = Ht.indexOf('puntos_ganados');
+        for (var k = 1; k < dT.length; k++) {
+          var ft = dT[k][tFecha];
+          var ftDate = (ft instanceof Date) ? ft : new Date(ft);
+          if (!isNaN(ftDate.getTime()) && ftDate.getTime() >= weekAgo.getTime()) {
+            visitas++;
+            puntosEntregados += Number(dT[k][tPts] || 0);
+          }
+        }
+      }
+    } catch (_) {}
+
+    // ----- Construir mensaje -----
+    var rest = cfg.restaurante_nombre || 'Restful Restobar';
+    var rango = Utilities.formatDate(weekAgo, tz, 'dd/MM') + ' – ' + Utilities.formatDate(now, tz, 'dd/MM/yyyy');
+    var lineas = [];
+    lineas.push('📊 *Informe Semanal — ' + rest + '*');
+    lineas.push('🗓 Semana: ' + rango);
+    lineas.push('');
+    lineas.push('🆕 *Nuevos registros:* ' + nuevos.length);
+    if (nuevos.length) {
+      var muestraN = nuevos.slice(0, 10);
+      muestraN.forEach(function(n){ lineas.push('  • ' + n.nombre + ' (' + n.telefono + ') – ' + n.fecha); });
+      if (nuevos.length > 10) lineas.push('  …y ' + (nuevos.length - 10) + ' más');
+    }
+    lineas.push('');
+    lineas.push('👥 *Total clientes:* ' + totalClientes);
+    lineas.push('📣 *Opt-in WhatsApp:* ' + totalOptin);
+    lineas.push('');
+    lineas.push('🛎 *Visitas registradas:* ' + visitas);
+    lineas.push('⭐ *Puntos entregados:* ' + puntosEntregados);
+    lineas.push('💎 *Puntos activos totales:* ' + totalPuntosActivos);
+    lineas.push('');
+    lineas.push('🎁 *Canjes:* ' + canjesCount);
+    Object.keys(canjesDetalle).forEach(function(k){ lineas.push('  • ' + k + ': ' + canjesDetalle[k]); });
+    lineas.push('');
+    lineas.push('_Generado automáticamente._');
+
+    var msg = lineas.join('\n');
+
+    // ----- Enviar al grupo del staff -----
+    var r = sendStaffWhatsApp_(msg, cfg);
+    console.log('weeklyReport WA: ' + JSON.stringify(r));
+
+    // ----- También por correo a weekly_report_emails -----
+    var emails = String(cfg.weekly_report_emails || '').split(',').map(function(s){return s.trim();}).filter(function(s){return s.indexOf('@') !== -1;});
+    if (emails.length) {
+      try {
+        MailApp.sendEmail({
+          to: emails.join(','),
+          subject: '📊 Informe semanal — ' + rest + ' (' + rango + ')',
+          body: msg
+        });
+      } catch (e) { console.log('weeklyReport email err: ' + e); }
+    }
+
+    return { ok: true, nuevos: nuevos.length, visitas: visitas, canjes: canjesCount, wa: r };
+  } catch (err) {
+    console.log('weeklyReportJob ERROR: ' + err);
+    return { ok: false, error: String(err) };
+  }
+}
+
+// Prueba manual del informe semanal sin esperar al lunes
+function testWeeklyReport() {
+  var r = weeklyReportJob();
+  Logger.log(JSON.stringify(r, null, 2));
+}
+
+// ============================================================
+//  LIMPIEZA DE TRIGGERS DUPLICADOS
+// ============================================================
+function cleanupDuplicateTriggers() {
+  var triggers = ScriptApp.getProjectTriggers();
+  var seen = {};
+  var removed = 0;
+  triggers.forEach(function(t){
+    var fn = t.getHandlerFunction();
+    if (seen[fn]) { ScriptApp.deleteTrigger(t); removed++; }
+    else seen[fn] = true;
+  });
+  try { SpreadsheetApp.getUi().alert('✅ Triggers limpiados. Eliminados duplicados: ' + removed); } catch(_) {}
+  console.log('Triggers únicos restantes: ' + Object.keys(seen).join(', '));
+  return { ok: true, removed: removed, kept: Object.keys(seen) };
+}
+
+// Instala TODOS los triggers automáticos en un solo paso
+function installAllTriggers() {
+  // limpiar primero todo
+  ScriptApp.getProjectTriggers().forEach(function(t){
+    var fn = t.getHandlerFunction();
+    if (['dailyPasswordJob','weeklyBackupJob','monthlyCleanupJob','weeklyReportJob','onEditEventos'].indexOf(fn) !== -1) {
+      ScriptApp.deleteTrigger(t);
+    }
+  });
+  ScriptApp.newTrigger('dailyPasswordJob').timeBased().atHour(6).everyDays(1).create();
+  ScriptApp.newTrigger('weeklyBackupJob').timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).atHour(2).create();
+  ScriptApp.newTrigger('monthlyCleanupJob').timeBased().onMonthDay(1).atHour(3).create();
+  ScriptApp.newTrigger('weeklyReportJob').timeBased().onWeekDay(ScriptApp.WeekDay.MONDAY).atHour(8).create();
+  // onEditEventos requiere ScriptApp.newTrigger().forSpreadsheet().onEdit()
+  var ss = SpreadsheetApp.getActive();
+  ScriptApp.newTrigger('onEditEventos').forSpreadsheet(ss).onEdit().create();
+  try {
+    SpreadsheetApp.getUi().alert(
+      '✅ Todos los triggers instalados:\n' +
+      '• dailyPasswordJob → 6:00 AM diario\n' +
+      '• weeklyBackupJob → lunes 2:00 AM\n' +
+      '• monthlyCleanupJob → día 1 de cada mes 3:00 AM\n' +
+      '• weeklyReportJob → lunes 8:00 AM\n' +
+      '• onEditEventos → al editar el sheet'
+    );
+  } catch(_) {}
+}
+
+// ============================================================
 //  EVOLUTION (WhatsApp) — versión mínima
 // ============================================================
-function sendDailyPasswordWhatsApp_(pwd, cfg) {
+// Envía un texto al grupo de WhatsApp del staff (configurado en evolution_group_jid)
+function sendStaffWhatsApp_(text, cfg) {
   try {
     cfg = cfg || readConfig();
-    // STAFF group → usa instancia mate-ai (evolution_url_staff)
     var url = String(cfg.evolution_url_staff || cfg.evolution_url || '').replace(/\/$/, '');
     var instance = String(cfg.evolution_instance_staff || cfg.evolution_instance || '');
     var apikey = String(cfg.evolution_apikey_staff || cfg.evolution_apikey || '');
@@ -1180,18 +1366,28 @@ function sendDailyPasswordWhatsApp_(pwd, cfg) {
       console.log('⚠️ Staff WA no configurado completamente. URL='+url+' inst='+instance+' jid='+jid);
       return { ok:false, error:'staff config incompleta' };
     }
-    var fecha = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd/MM/yyyy');
-    var msg = '🔐 *Contraseña del día — Restful Restobar*\n📅 ' + fecha + '\n\nLa contraseña de HOY es:\n\n*' + pwd + '*\n\n_Comparte solo con el equipo. Expira a las 23:59._';
     var res = UrlFetchApp.fetch(url + '/message/sendText/' + encodeURIComponent(instance), {
       method:'post', contentType:'application/json', headers:{'apikey':apikey},
-      payload: JSON.stringify({ number: jid, text: msg }),
+      payload: JSON.stringify({ number: jid, text: text }),
       muteHttpExceptions:true
     });
     var code = res.getResponseCode();
-    if (code >= 200 && code < 300) return { ok:true, status: code };
-    console.log('Staff WA status ' + code + ': ' + res.getContentText());
-    return { ok:false, status: code, error: res.getContentText() };
+    var body = res.getContentText();
+    if (code >= 200 && code < 300) {
+      console.log('Staff WA OK ' + code);
+      return { ok:true, status: code };
+    }
+    console.log('Staff WA status ' + code + ': ' + body);
+    return { ok:false, status: code, error: body };
   } catch (e) { console.log('staff wa err: ' + e); return { ok:false, error: String(e) }; }
+}
+
+function sendDailyPasswordWhatsApp_(pwd, cfg) {
+  cfg = cfg || readConfig();
+  var fecha = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd/MM/yyyy');
+  var rest = cfg.restaurante_nombre || 'Restful Restobar';
+  var msg = '🔐 *Contraseña del día — ' + rest + '*\n📅 ' + fecha + '\n\nLa contraseña de HOY es:\n\n*' + pwd + '*\n\n_Comparte solo con el equipo. Expira a las 23:59._';
+  return sendStaffWhatsApp_(msg, cfg);
 }
 
 // Prueba manual del envío del password al grupo del staff
