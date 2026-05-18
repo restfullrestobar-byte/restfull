@@ -1390,13 +1390,39 @@ function sendDailyPasswordWhatsApp_(pwd, cfg) {
   return sendStaffWhatsApp_(msg, cfg);
 }
 
-// Prueba manual del envío del password al grupo del staff
+// Prueba que SOLO valida la conexión al grupo del staff (NO manda password fake)
 function testStaffPasswordWhatsApp() {
   var cfg = readConfig();
-  var pwd = generate6DigitPassword();
-  var r = sendDailyPasswordWhatsApp_(pwd, cfg);
-  Logger.log('Password prueba: ' + pwd);
+  var msg = '🧪 *PRUEBA — ' + (cfg.restaurante_nombre || 'Restful Restobar') + '*\n\nSi recibes esto, el envío al grupo del staff está funcionando correctamente.\n\n_Este mensaje es solo de prueba — NO es un password._';
+  var r = sendStaffWhatsApp_(msg, cfg);
   Logger.log(JSON.stringify(r, null, 2));
+}
+
+// Reenvía al grupo el password REAL del día (lee del sheet o lo genera si no existe)
+function resendTodayPassword() {
+  var cfg = readConfig();
+  var today = todayISO();
+  var shP = SpreadsheetApp.getActive().getSheetByName(SHEETS.PASSWORDS);
+  var tz = Session.getScriptTimeZone();
+  var data = shP.getDataRange().getValues();
+  var pwd = null;
+  for (var i = data.length - 1; i >= 1; i--) {
+    var raw = data[i][0];
+    var rowDate = (raw instanceof Date) ? Utilities.formatDate(raw, tz, 'yyyy-MM-dd') : String(raw).substring(0, 10);
+    if (rowDate === today) { pwd = String(data[i][1]); break; }
+  }
+  if (!pwd) {
+    pwd = generate6DigitPassword();
+    var nextRow = shP.getLastRow() + 1;
+    shP.getRange(nextRow, 1).setNumberFormat('@');
+    shP.getRange(nextRow, 2).setNumberFormat('@');
+    shP.appendRow([today, pwd, new Date(), cfg.restaurante_email_dueno]);
+    sendOwnerEmail_(pwd, cfg);
+  }
+  var r = sendDailyPasswordWhatsApp_(pwd, cfg);
+  Logger.log('Password REAL de hoy: ' + pwd);
+  Logger.log(JSON.stringify(r, null, 2));
+  return { pwd: pwd, wa: r };
 }
 
 // ============================================================
