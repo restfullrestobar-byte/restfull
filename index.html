@@ -357,8 +357,8 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
   </button>
 </nav>
 <nav id="subnav" class="show">
-  <button class="subpill on" data-cat="entradas">Entradas</button>
-  <button class="subpill" data-cat="combos" style="color:#FFD700;border-color:rgba(255,215,0,0.4);">⚽ Combos Mundialistas</button>
+  <button class="subpill" data-cat="entradas">Entradas</button>
+  <button class="subpill on" data-cat="combos" style="color:#FFD700;border-color:rgba(255,215,0,0.4);">⚽ Combos Mundialistas</button>
   <button class="subpill" data-cat="capas">Hamburguesas</button>
   <button class="subpill" data-cat="pastas">Pastas</button>
   <button class="subpill" data-cat="especialidades">Especialidades</button>
@@ -370,7 +370,7 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
 </nav>
 
 <!-- ENTRADAS -->
-<div class="sec show" id="entradas"><div class="sec-bg" id="bg-entradas"></div><div class="sec-head"><h2>Entradas Restful</h2><div class="sub">Para compartir y disfrutar</div></div>
+<div class="sec" id="entradas"><div class="sec-bg" id="bg-entradas"></div><div class="sec-head"><h2>Entradas Restful</h2><div class="sub">Para compartir y disfrutar</div></div>
 <div class="item"><div class="info"><div class="name">Tacos a la Sinaloa</div><div class="desc">3 Tortillas de maíz, guacamole, pico de gallo, suave birria cocinada por 12 horas acompañado de jugo de birria</div></div><div class="price">$8<small>,00</small></div></div>
 <div class="item"><div class="info"><div class="name">Nachos Restful</div><div class="desc">Nachos de la casa, carne de birria, guacamole, salsa cheddar</div></div><div class="price">$8<small>,50</small></div></div>
 <div class="item"><div class="info"><div class="name">Nachos Cheese Bacon</div><div class="desc">Guacamole, queso cheddar, bacon crocante</div></div><div class="price">$7<small>,00</small></div></div>
@@ -380,8 +380,8 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
 </div>
 
 <!-- COMBOS MUNDIALISTAS -->
-<div class="sec" id="combos"><div class="sec-bg" id="bg-combos"></div><div class="sec-head"><h2>Combos Mundialistas</h2><div class="sub">Promociones especiales para vivir el mundial</div></div>
-<div class="item"><div class="info"><div class="name">Combo Tacos Sinaloa</div><div class="desc">2 Tacos a la Sinaloa + 2 cervezas</div></div><div class="price">$12<small>,99</small></div></div>
+<div class="sec show" id="combos"><div class="sec-bg" id="bg-combos"></div><div class="sec-head"><h2>Combos Mundialistas</h2><div class="sub">Promociones especiales para vivir el mundial</div></div>
+<div class="item"><div class="info"><div class="name">Combo Tacos Sinaloa</div><div class="desc">2 Tacos a la Sinaloa + 2 micheladas</div></div><div class="price">$12<small>,99</small></div></div>
 <div class="item"><div class="info"><div class="name">Combo Hamburguesas</div><div class="desc">2 Hamburguesas tradicionales + 2 micheladas</div></div><div class="price">$14<small>,99</small></div></div>
 <div class="item"><div class="info"><div class="name">Picadita Mundialista</div><div class="desc">Pollo, filete de cerdo, chorizos, papas fritas y costilla BBQ</div></div><div class="price">$18<small>,00</small></div></div>
 <div class="item"><div class="info"><div class="name">Combo Nachos + Tacos</div><div class="desc">Nachos + Tacos + 2 micheladas</div></div><div class="price">$15<small>,00</small></div></div>
@@ -806,6 +806,7 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
 
   var themes={
     entradas:['🌮','🧀','🥑','🫔','🍗'],
+    combos:['⚽','🏆','🎉','🍻','🌮','🍔','🔥'],
     capas:['🍔','🥓','🧅','🍟','🥬'],
     pastas:['🍝','🧄','🫒','🧀','🌿'],
     especialidades:['🥩','🔥','🍷','🥔','🌶️'],
@@ -859,7 +860,7 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     if(s==='menu'){
       subnav.classList.add('show');
       var current=document.querySelector('#subnav .subpill.on');
-      var cat=current?current.getAttribute('data-cat'):'entradas';
+      var cat=current?current.getAttribute('data-cat'):'combos';
       activateCat(cat);
       return;
     }
@@ -896,7 +897,7 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
     if(el){el.style.display='';void el.offsetWidth;el.classList.add('show');}
   };
 
-  spawnEmojis('entradas',themes.entradas);
+  spawnEmojis('combos',themes.combos);
 
   var ratings={atencion:0,comida:0,ambiente:0};
   document.querySelectorAll('.stars').forEach(function(g){
