@@ -123,6 +123,10 @@ nav#subnav::-webkit-scrollbar{display:none;}
 .item .price{font-size:1.2rem;color:#C5A55A;font-weight:700;white-space:nowrap;align-self:center;min-width:60px;text-align:right;transition:all 0.3s;}
 .item:hover .price{text-shadow:0 0 30px rgba(197,165,90,0.2);}
 .item .price small{font-size:0.65rem;opacity:0.5;font-weight:400;}
+.item.agotado{opacity:0.55;pointer-events:none;}
+.item.agotado .name{text-decoration:line-through;color:rgba(245,230,211,0.5);}
+.item.agotado .price{text-decoration:line-through;color:rgba(197,165,90,0.4);}
+.item.agotado .name::after{content:'AGOTADO';display:inline-block;margin-left:10px;background:linear-gradient(135deg,#8B0000,#B22222);color:#fff;font-size:0.6rem;font-weight:800;letter-spacing:0.15em;padding:2px 8px;border-radius:999px;vertical-align:middle;text-decoration:none;font-family:Arial,sans-serif;}
 .cat{font-size:0.85rem;color:#C5A55A;letter-spacing:0.2em;text-transform:uppercase;margin-top:32px;margin-bottom:8px;padding:8px 0 6px;border-bottom:1px solid rgba(197,165,90,0.08);display:flex;align-items:center;gap:10px;position:relative;z-index:2;}
 .cat::before{content:'';width:6px;height:1px;background:#C5A55A;}
 
@@ -371,9 +375,9 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
 
 <!-- ENTRADAS -->
 <div class="sec" id="entradas"><div class="sec-bg" id="bg-entradas"></div><div class="sec-head"><h2>Entradas Restful</h2><div class="sub">Para compartir y disfrutar</div></div>
-<div class="item"><div class="info"><div class="name">Tacos a la Sinaloa</div><div class="desc">3 Tortillas de maíz, guacamole, pico de gallo, suave birria cocinada por 12 horas acompañado de jugo de birria</div></div><div class="price">$8<small>,00</small></div></div>
-<div class="item"><div class="info"><div class="name">Nachos Restful</div><div class="desc">Nachos de la casa, carne de birria, guacamole, salsa cheddar</div></div><div class="price">$8<small>,50</small></div></div>
-<div class="item"><div class="info"><div class="name">Nachos Cheese Bacon</div><div class="desc">Guacamole, queso cheddar, bacon crocante</div></div><div class="price">$7<small>,00</small></div></div>
+<div class="item agotado"><div class="info"><div class="name">Tacos a la Sinaloa</div><div class="desc">3 Tortillas de maíz, guacamole, pico de gallo, suave birria cocinada por 12 horas acompañado de jugo de birria</div></div><div class="price">$8<small>,00</small></div></div>
+<div class="item agotado"><div class="info"><div class="name">Nachos Restful</div><div class="desc">Nachos de la casa, carne de birria, guacamole, salsa cheddar</div></div><div class="price">$8<small>,50</small></div></div>
+<div class="item agotado"><div class="info"><div class="name">Nachos Cheese Bacon</div><div class="desc">Guacamole, queso cheddar, bacon crocante</div></div><div class="price">$7<small>,00</small></div></div>
 <div class="item"><div class="info"><div class="name">Tacos al Matambre</div><div class="desc">3 Tortillas de maíz, guacamole, pico de gallo, acompañado de jugo de birria</div></div><div class="price">$9<small>,00</small></div></div>
 <div class="item"><div class="info"><div class="name">Alitas</div><div class="desc">Sabores BBQ, Parmesano, Honey Mustard. Incluye papas cheddar con tocino</div></div><div class="price">$7<small>,50</small></div></div>
 <div class="item"><div class="info"><div class="name">Picada Mundialista</div><div class="desc">Pollo, cerdo, chorizo, costillas BBQ y papas cheddar. Ideal para compartir</div></div><div class="price">$25<small>,00</small></div></div>
