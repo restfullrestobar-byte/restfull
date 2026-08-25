@@ -13,12 +13,12 @@ body{font-family:Georgia,serif;background:#050505;color:#fff;overflow-x:hidden;}
 @keyframes vidFadeIn{to{opacity:1;}}
 #splash::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,0,0,0.55) 0%,rgba(10,0,0,0.35) 40%,rgba(10,0,0,0.72) 100%),radial-gradient(ellipse at 50% 40%,rgba(139,0,0,0.28) 0%,transparent 60%);z-index:1;pointer-events:none;}
 #splash::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(0,0,0,0.55) 85%,rgba(0,0,0,0.85) 100%);z-index:1;pointer-events:none;}
-/* Frase curva decorativa esquina */
-#splash .sp-curve{position:absolute;top:24px;right:8px;width:180px;height:180px;z-index:3;opacity:0;animation:curveIn 1s 2.2s ease-out forwards;pointer-events:none;filter:drop-shadow(0 2px 12px rgba(0,0,0,0.6));}
-#splash .sp-curve svg{width:100%;height:100%;overflow:visible;}
-#splash .sp-curve text{font-family:'Georgia',serif;font-style:italic;font-size:15px;letter-spacing:3px;fill:#D4B96E;text-transform:uppercase;font-weight:700;}
-@keyframes curveIn{0%{opacity:0;transform:rotate(-18deg) scale(0.8);}100%{opacity:1;transform:rotate(0) scale(1);}}
-@media (max-width:480px){#splash .sp-curve{width:150px;height:150px;top:16px;right:4px;} #splash .sp-curve text{font-size:13px;letter-spacing:2px;}}
+/* Frase curva decorativa — inline entre tagline y botones (no se monta sobre nada) */
+#splash .sp-curve{width:260px;max-width:82vw;height:56px;margin:22px auto 0;position:relative;z-index:3;opacity:0;filter:drop-shadow(0 2px 10px rgba(0,0,0,0.75));animation:curveIn 1s 2.2s ease-out forwards;pointer-events:none;}
+#splash .sp-curve svg{width:100%;height:100%;overflow:visible;display:block;}
+#splash .sp-curve text{font-family:'Georgia',serif;font-style:italic;font-size:14px;letter-spacing:3px;fill:#D4B96E;text-transform:uppercase;font-weight:700;}
+@keyframes curveIn{0%{opacity:0;transform:translateY(-8px) rotate(-6deg) scale(0.9);}100%{opacity:1;transform:translateY(0) rotate(0) scale(1);}}
+@media (max-width:480px){#splash .sp-curve{width:230px;height:50px;margin-top:18px;} #splash .sp-curve text{font-size:12px;letter-spacing:2.5px;}}
 #splash.gone{opacity:0;pointer-events:none;}
 #splash .welcome{font-size:clamp(1rem,3vw,1.4rem);letter-spacing:0.5em;color:rgba(197,165,90,0.7);font-family:Arial,sans-serif;font-weight:300;text-transform:uppercase;opacity:0;animation:fadeUp 1s 0.3s both;position:relative;z-index:2;}
 #splash .logo-img{width:200px;margin:30px 0;opacity:0;animation:scaleIn 1.2s 1.2s both;filter:drop-shadow(0 0 60px rgba(139,0,0,0.5));position:relative;z-index:2;}
@@ -369,18 +369,18 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
 <!-- SPLASH SCREEN -->
 <div id="splash">
   <video class="sp-video" src="splash-bg.mp4" poster="splash-bg.jpg" autoplay muted loop playsinline preload="auto" disablepictureinpicture disableremoteplayback></video>
-  <div class="sp-curve" aria-hidden="true">
-    <svg viewBox="0 0 180 180">
-      <defs>
-        <path id="spCurvePath" d="M 20,140 A 90,90 0 0 1 160,40" fill="none"/>
-      </defs>
-      <text><textPath href="#spCurvePath" startOffset="50%" text-anchor="middle">Qué bien, bestia ✦</textPath></text>
-    </svg>
-  </div>
   <div class="sp-particles" id="sp"></div>
   <div class="welcome">Bienvenidos a</div>
   <img class="logo-img" src="Logo.png" alt="Restful Restobar">
   <div class="tagline">Donde cada momento es especial</div>
+  <div class="sp-curve" aria-hidden="true">
+    <svg viewBox="0 0 260 56" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <path id="spCurvePath" d="M 12,46 Q 130,-4 248,46" fill="none"/>
+      </defs>
+      <text><textPath href="#spCurvePath" startOffset="50%" text-anchor="middle">✦ Qué bien, bestia ✦</textPath></text>
+    </svg>
+  </div>
   <div class="sp-actions">
     <button class="sp-btn sp-menu a1" id="enterBtn" type="button">
       <span class="sp-ic"><svg viewBox="0 0 24 24"><path d="M3 2v6c0 1.1.9 2 2 2s2-.9 2-2V2"/><line x1="5" y1="10" x2="5" y2="22"/><path d="M19 22V2c-2 0-3 2-3 4v6c0 1.1.9 2 2 2h1"/></svg></span>
