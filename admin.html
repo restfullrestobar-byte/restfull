@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Panel · Restful Restobar</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{--bg:#0a0a0a;--card:#131313;--card2:#1a1a1a;--line:#262626;--gold:#C5A55A;--gold2:#D4B96E;--txt:#E8E0D4;--dim:#8a8279;--red:#B22222;--green:#2e9e5b;}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:15px;line-height:1.5;padding-bottom:40px;}
+h1,h2,h3{font-family:Georgia,serif;font-weight:400;}
+.wrap{max-width:860px;margin:0 auto;padding:0 14px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);background:var(--card2);color:var(--txt);padding:11px 18px;border-radius:10px;font-size:0.88rem;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;}
+.btn:hover{border-color:var(--gold);color:#fff;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#b8923f);color:#1a0e00;border-color:transparent;}
+.btn-gold:hover{box-shadow:0 6px 18px rgba(197,165,90,.35);color:#1a0e00;}
+.btn-danger{border-color:rgba(178,34,34,.4);color:#e07777;}
+.btn-danger:hover{border-color:var(--red);background:rgba(178,34,34,.12);color:#fff;}
+.btn-sm{padding:7px 11px;font-size:0.78rem;border-radius:8px;}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--txt);padding:10px 12px;border-radius:9px;font-size:0.9rem;font-family:inherit;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);}
+label{display:block;font-size:0.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:5px;font-weight:700;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;}
+
+/* LOGIN */
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+#login .box{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px 24px;}
+#login h1{text-align:center;font-size:1.5rem;color:var(--gold);letter-spacing:.12em;margin-bottom:4px;}
+#login .sub{text-align:center;color:var(--dim);font-size:0.78rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:26px;}
+#login .fld{margin-bottom:14px;}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:50;background:rgba(10,10,10,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:12px 0;}
+header .inner{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+header .brand{font-family:Georgia,serif;color:var(--gold);letter-spacing:.14em;font-size:1rem;}
+header .spacer{flex:1;}
+.badge{font-size:0.62rem;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:99px;font-weight:800;}
+.badge-admin{background:rgba(197,165,90,.18);color:var(--gold2);border:1px solid rgba(197,165,90,.4);}
+.badge-dueno{background:rgba(255,255,255,.06);color:var(--dim);border:1px solid var(--line);}
+
+/* TABS */
+.tabs{display:flex;gap:8px;margin:16px 0;overflow-x:auto;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:9px 16px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--dim);font-size:0.8rem;font-weight:700;letter-spacing:.06em;cursor:pointer;white-space:nowrap;font-family:inherit;}
+.tab.on{background:var(--gold);color:#1a0e00;border-color:transparent;}
+
+/* LOCK */
+#lock{display:none;background:linear-gradient(135deg,rgba(178,34,34,.14),rgba(178,34,34,.06));border:1px solid rgba(178,34,34,.45);border-radius:14px;padding:18px;margin:16px 0;}
+#lock.show{display:block;}
+#lock h3{color:#e58b8b;font-size:1.05rem;margin-bottom:6px;}
+#lock p{color:var(--dim);font-size:0.86rem;}
+
+/* SECCIONES */
+.secbar{display:flex;gap:7px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px;}
+.secbar::-webkit-scrollbar{display:none;}
+.secbtn{padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--dim);font-size:0.75rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;}
+.secbtn.on{background:var(--card2);border-color:var(--gold);color:var(--gold2);}
+
+/* ITEM */
+.item{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px;margin-bottom:10px;transition:border-color .2s;}
+.item.dirty{border-color:var(--gold);}
+.item.off{opacity:.5;}
+.item .top{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;}
+.item .nm{flex:1;font-weight:600;font-size:0.95rem;background:none;border:none;padding:4px 0;color:#fff;font-family:Georgia,serif;}
+.item .nm:focus{outline:none;border-bottom:1px solid var(--gold);}
+.item .pr{width:92px;text-align:right;color:var(--gold2);font-weight:700;font-family:Georgia,serif;}
+.item .ds{background:none;border:none;color:var(--dim);font-size:0.82rem;resize:vertical;min-height:34px;padding:4px 0;width:100%;}
+.item .ds:focus{outline:none;border-bottom:1px solid var(--line);}
+.item .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:9px;}
+.item .row > *{flex:0 0 auto;}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:0.72rem;color:var(--dim);cursor:pointer;user-select:none;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-weight:700;}
+.chip input{width:auto;margin:0;accent-color:var(--gold);}
+.chip.on{border-color:var(--red);color:#e58b8b;background:rgba(178,34,34,.1);}
+.mini{width:74px;font-size:0.8rem;padding:7px 9px;}
+.saved{color:var(--green);font-size:0.72rem;font-weight:700;opacity:0;transition:.3s;margin-left:auto;}
+.saved.show{opacity:1;}
+
+/* PAGOS */
+.mes{display:flex;align-items:center;gap:12px;padding:13px;background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:9px;flex-wrap:wrap;}
+.mes .lbl{flex:1;min-width:120px;}
+.mes .lbl b{font-family:Georgia,serif;font-size:1rem;text-transform:capitalize;}
+.mes .lbl span{display:block;font-size:0.74rem;color:var(--dim);}
+.est{font-size:0.66rem;letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:99px;font-weight:800;}
+.est-pagado{background:rgba(46,158,91,.15);color:#5fd090;border:1px solid rgba(46,158,91,.4);}
+.est-pendiente{background:rgba(178,34,34,.14);color:#e58b8b;border:1px solid rgba(178,34,34,.4);}
+
+.msg{padding:11px 14px;border-radius:10px;font-size:0.85rem;margin-bottom:12px;display:none;}
+.msg.show{display:block;}
+.msg-err{background:rgba(178,34,34,.14);border:1px solid rgba(178,34,34,.4);color:#e58b8b;}
+.msg-ok{background:rgba(46,158,91,.14);border:1px solid rgba(46,158,91,.4);color:#5fd090;}
+.empty{text-align:center;color:var(--dim);padding:40px 20px;font-size:0.88rem;}
+.hide{display:none !important;}
+@media(max-width:560px){.item .pr{width:76px;} .wrap{padding:0 11px;}}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="login">
+  <div class="box">
+    <h1>RESTFUL</h1>
+    <div class="sub">Panel de menú</div>
+    <div class="msg msg-err" id="loginErr"></div>
+    <div class="fld"><label>Correo</label><input type="email" id="email" autocomplete="username"></div>
+    <div class="fld"><label>Contraseña</label><input type="password" id="pass" autocomplete="current-password"></div>
+    <button class="btn btn-gold" id="btnLogin" style="width:100%;margin-top:8px;">Entrar</button>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="hide">
+  <header>
+    <div class="wrap inner">
+      <span class="brand">RESTFUL</span>
+      <span class="badge" id="roleBadge"></span>
+      <span class="spacer"></span>
+      <button class="btn btn-sm" id="btnOut">Salir</button>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div id="lock">
+      <h3>🔒 Edición bloqueada</h3>
+      <p id="lockTxt"></p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab on" data-tab="menu">Menú</button>
+      <button class="tab hide" data-tab="pagos" id="tabPagos">Pagos</button>
+    </div>
+
+    <div class="msg" id="msg"></div>
+
+    <!-- MENU -->
+    <div id="viewMenu">
+      <div class="secbar" id="secbar"></div>
+      <div id="items"><div class="empty">Cargando…</div></div>
+      <button class="btn btn-gold" id="btnAdd" style="width:100%;margin-top:6px;">+ Agregar plato</button>
+    </div>
+
+    <!-- PAGOS -->
+    <div id="viewPagos" class="hide">
+      <div class="card">
+        <h3 style="color:var(--gold);margin-bottom:12px;font-size:1.05rem;">Registrar pago</h3>
+        <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end;">
+          <div style="flex:1;min-width:130px;"><label>Mes</label><input type="month" id="pgMes"></div>
+          <div style="width:96px;"><label>Monto</label><input type="number" id="pgMonto" value="25" step="0.01"></div>
+        </div>
+        <div style="margin-top:10px;"><label>Referencia de transferencia</label><input id="pgRef" placeholder="Nro. comprobante Banco Pichincha"></div>
+        <button class="btn btn-gold" id="btnPagar" style="width:100%;margin-top:12px;">Marcar como pagado</button>
+      </div>
+      <h3 style="margin:18px 0 10px;font-size:1rem;color:var(--dim);">Historial</h3>
+      <div id="pagos"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="sb-config.js"></script>
+<script>
+(function(){
+'use strict';
+if(!window.SB_URL || window.SB_URL.indexOf('TU-PROYECTO')>-1){
+  document.body.innerHTML='<div style="padding:40px;text-align:center;font-family:Arial;color:#e58b8b">'+
+    '<h2 style="font-family:Georgia">Falta configurar Supabase</h2>'+
+    '<p style="color:#8a8279;margin-top:10px">Editá <b>sb-config.js</b> con la URL y la anon key de tu proyecto.</p></div>';
+  return;
+}
+var sb = supabase.createClient(window.SB_URL, window.SB_ANON);
+
+var S = { user:null, rol:'dueno', canEdit:false, secciones:[], items:[], sec:null, susc:[], cfg:{} };
+var $ = function(id){ return document.getElementById(id); };
+
+function msg(t, ok){
+  var m=$('msg'); m.textContent=t; m.className='msg show '+(ok?'msg-ok':'msg-err');
+  clearTimeout(m._t); m._t=setTimeout(function(){ m.className='msg'; }, 4000);
+}
+function money(v){ return (Math.round(v*100)/100).toFixed(2); }
+function mesNombre(d){
+  var p=String(d).split('-');
+  var M=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return M[parseInt(p[1],10)-1]+' '+p[0];
+}
+function mesActual(){
+  var n=new Date();
+  return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-01';
+}
+
+// ---------- AUTH ----------
+$('btnLogin').addEventListener('click', doLogin);
+$('pass').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+
+function doLogin(){
+  var e=$('email').value.trim(), p=$('pass').value;
+  if(!e||!p) return showLoginErr('Completá correo y contraseña.');
+  $('btnLogin').disabled=true; $('btnLogin').textContent='Entrando…';
+  sb.auth.signInWithPassword({email:e,password:p}).then(function(r){
+    $('btnLogin').disabled=false; $('btnLogin').textContent='Entrar';
+    if(r.error) return showLoginErr(traducirError(r.error.message));
+    boot();
+  });
+}
+function showLoginErr(t){ var m=$('loginErr'); m.textContent=t; m.className='msg msg-err show'; }
+function traducirError(m){
+  if(/invalid login/i.test(m)) return 'Correo o contraseña incorrectos.';
+  if(/email not confirmed/i.test(m)) return 'Falta confirmar el correo.';
+  return m;
+}
+$('btnOut').addEventListener('click', function(){
+  sb.auth.signOut().then(function(){ location.reload(); });
+});
+
+// ---------- BOOT ----------
+function boot(){
+  sb.auth.getUser().then(function(r){
+    if(!r.data || !r.data.user){ $('login').classList.remove('hide'); return; }
+    S.user=r.data.user;
+    $('login').classList.add('hide'); $('app').classList.remove('hide');
+    return Promise.all([
+      sb.from('perfiles').select('rol').eq('id',S.user.id).single(),
+      sb.from('config').select('clave,valor'),
+      sb.from('suscripciones').select('*').order('mes',{ascending:false})
+    ]).then(function(res){
+      S.rol = (res[0].data && res[0].data.rol) || 'dueno';
+      (res[1].data||[]).forEach(function(c){ S.cfg[c.clave]=c.valor; });
+      S.susc = res[2].data || [];
+      aplicarRol();
+      evaluarBloqueo();
+      return cargarMenu();
+    });
+  });
+}
+
+function aplicarRol(){
+  var b=$('roleBadge');
+  b.textContent = S.rol==='admin' ? 'Admin' : 'Dueño';
+  b.className = 'badge '+(S.rol==='admin'?'badge-admin':'badge-dueno');
+  if(S.rol==='admin'){ $('tabPagos').classList.remove('hide'); renderPagos(); }
+}
+
+function evaluarBloqueo(){
+  var hoy=new Date(), dia=hoy.getDate();
+  var gracia=parseInt(S.cfg.dias_gracia||'5',10);
+  var pagado = S.susc.some(function(s){ return s.mes===mesActual() && s.estado==='pagado'; });
+  S.canEdit = (S.rol==='admin') || pagado || (dia<=gracia);
+  if(!S.canEdit){
+    $('lock').classList.add('show');
+    $('lockTxt').textContent='El mes de '+mesNombre(mesActual())+' figura como pendiente de pago ($'
+      + (S.cfg.monto_mensual||'25') + '). El menú público sigue funcionando normalmente — solo está pausada la edición. '
+      + 'Escribile a ' + (S.cfg.contacto_soporte||'soporte') + ' para reactivarla.';
+  }
+}
+
+// ---------- MENU ----------
+function cargarMenu(){
+  return Promise.all([
+    sb.from('secciones').select('*').order('orden'),
+    sb.from('menu_items').select('*').order('seccion').order('orden')
+  ]).then(function(r){
+    if(r[0].error) return msg('Error cargando secciones: '+r[0].error.message);
+    S.secciones=r[0].data||[]; S.items=r[1].data||[];
+    if(!S.sec && S.secciones.length) S.sec=S.secciones[0].id;
+    renderSecbar(); renderItems();
+  });
+}
+
+function renderSecbar(){
+  $('secbar').innerHTML = S.secciones.map(function(s){
+    var n = S.items.filter(function(i){ return i.seccion===s.id; }).length;
+    return '<button class="secbtn'+(s.id===S.sec?' on':'')+'" data-sec="'+s.id+'">'+s.nombre+' ('+n+')</button>';
+  }).join('');
+  Array.prototype.forEach.call($('secbar').children, function(b){
+    b.onclick=function(){ S.sec=b.getAttribute('data-sec'); renderSecbar(); renderItems(); };
+  });
+}
+
+function renderItems(){
+  var list=S.items.filter(function(i){ return i.seccion===S.sec; });
+  if(!list.length){ $('items').innerHTML='<div class="empty">No hay platos en esta sección.</div>'; return; }
+  var ro = S.canEdit ? '' : ' disabled';
+  $('items').innerHTML = list.map(function(it){
+    return '<div class="item'+(it.activo?'':' off')+'" data-id="'+it.id+'">'
+      + '<div class="top">'
+        + '<input class="nm" data-f="nombre" value="'+esc(it.nombre)+'"'+ro+'>'
+        + '<input class="pr" data-f="precio" type="number" step="0.01" value="'+money(it.precio)+'"'+ro+'>'
+      + '</div>'
+      + '<textarea class="ds" data-f="descripcion" placeholder="Descripción (opcional)"'+ro+'>'+esc(it.descripcion||'')+'</textarea>'
+      + '<div class="row">'
+        + '<label class="chip'+(it.agotado?' on':'')+'"><input type="checkbox" data-f="agotado"'+(it.agotado?' checked':'')+ro+'> Agotado</label>'
+        + '<label class="chip"><input type="checkbox" data-f="activo"'+(it.activo?' checked':'')+ro+'> Visible</label>'
+        + '<input class="mini" data-f="peso" placeholder="250g" value="'+esc(it.peso||'')+'"'+ro+'>'
+        + '<input class="mini" data-f="precio2" type="number" step="0.01" placeholder="2º $" value="'+(it.precio2!=null?money(it.precio2):'')+'"'+ro+'>'
+        + '<span class="saved">guardado</span>'
+        + (S.canEdit ? '<button class="btn btn-sm btn-danger" data-del="1">Eliminar</button>' : '')
+      + '</div></div>';
+  }).join('');
+  if(S.canEdit) enlazarItems();
+}
+
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function enlazarItems(){
+  Array.prototype.forEach.call($('items').querySelectorAll('.item'), function(el){
+    var id=parseInt(el.getAttribute('data-id'),10);
+    Array.prototype.forEach.call(el.querySelectorAll('[data-f]'), function(inp){
+      var ev = inp.type==='checkbox' ? 'change' : 'blur';
+      inp.addEventListener(ev, function(){ guardarCampo(el,id,inp); });
+    });
+    var del=el.querySelector('[data-del]');
+    if(del) del.addEventListener('click', function(){ eliminar(id, el); });
+  });
+}
+
+function guardarCampo(el,id,inp){
+  var f=inp.getAttribute('data-f'), v;
+  if(inp.type==='checkbox') v=inp.checked;
+  else if(inp.type==='number') v = inp.value==='' ? null : parseFloat(inp.value);
+  else v=inp.value.trim();
+
+  var orig=S.items.filter(function(i){return i.id===id;})[0];
+  if(!orig || orig[f]===v) return;
+  if(f==='nombre' && !v){ inp.value=orig.nombre; return msg('El nombre no puede quedar vacío.'); }
+  if(f==='precio' && (v==null||v<0)){ inp.value=money(orig.precio); return msg('Precio inválido.'); }
+
+  el.classList.add('dirty');
+  var patch={}; patch[f]=v;
+  sb.from('menu_items').update(patch).eq('id',id).select().single().then(function(r){
+    el.classList.remove('dirty');
+    if(r.error){
+      if(inp.type==='checkbox') inp.checked=orig[f]; else inp.value=orig[f];
+      return msg(errPermiso(r.error));
+    }
+    S.items=S.items.map(function(i){ return i.id===id ? r.data : i; });
+    if(f==='agotado') inp.parentNode.classList.toggle('on', v);
+    if(f==='activo') el.classList.toggle('off', !v);
+    flash(el);
+  });
+}
+
+function flash(el){
+  var s=el.querySelector('.saved'); if(!s) return;
+  s.classList.add('show'); setTimeout(function(){ s.classList.remove('show'); },1300);
+}
+
+function errPermiso(e){
+  if(e.code==='42501' || /row-level security|policy/i.test(e.message||''))
+    return 'Sin permiso para editar — el mes figura como pendiente de pago.';
+  return 'Error: '+(e.message||'desconocido');
+}
+
+function eliminar(id, el){
+  var it=S.items.filter(function(i){return i.id===id;})[0];
+  if(!confirm('¿Eliminar "'+(it?it.nombre:'este plato')+'"?\n\nNo se puede deshacer.')) return;
+  sb.from('menu_items').delete().eq('id',id).then(function(r){
+    if(r.error) return msg(errPermiso(r.error));
+    S.items=S.items.filter(function(i){ return i.id!==id; });
+    el.style.opacity='0'; setTimeout(function(){ renderSecbar(); renderItems(); },180);
+    msg('Plato eliminado.', true);
+  });
+}
+
+$('btnAdd').addEventListener('click', function(){
+  if(!S.canEdit) return msg('Edición bloqueada: el mes figura como pendiente de pago.');
+  var nombre=prompt('Nombre del plato:'); if(!nombre||!nombre.trim()) return;
+  var precio=parseFloat(prompt('Precio (ej: 8.50):')||''); 
+  if(isNaN(precio)||precio<0) return msg('Precio inválido.');
+  var enSec=S.items.filter(function(i){ return i.seccion===S.sec; });
+  var maxOrd=enSec.reduce(function(a,i){ return Math.max(a,i.orden||0); },0);
+  var cat = enSec.length ? enSec[enSec.length-1].categoria : '';
+  sb.from('menu_items').insert({seccion:S.sec,nombre:nombre.trim(),precio:precio,categoria:cat,orden:maxOrd+1})
+    .select().single().then(function(r){
+      if(r.error) return msg(errPermiso(r.error));
+      S.items.push(r.data); renderSecbar(); renderItems();
+      msg('Plato agregado.', true);
+    });
+});
+
+// ---------- PAGOS ----------
+function renderPagos(){
+  $('pgMes').value = mesActual().slice(0,7);
+  if(S.cfg.monto_mensual) $('pgMonto').value=S.cfg.monto_mensual;
+  if(!S.susc.length){ $('pagos').innerHTML='<div class="empty">Sin pagos registrados todavía.</div>'; return; }
+  $('pagos').innerHTML = S.susc.map(function(s){
+    return '<div class="mes"><div class="lbl"><b>'+mesNombre(s.mes)+'</b>'
+      + '<span>$'+money(s.monto)+(s.referencia?' · ref '+esc(s.referencia):'')
+      + (s.fecha_pago?' · '+new Date(s.fecha_pago).toLocaleDateString('es-EC'):'')+'</span></div>'
+      + '<span class="est est-'+s.estado+'">'+s.estado+'</span></div>';
+  }).join('');
+}
+
+$('btnPagar').addEventListener('click', function(){
+  var m=$('pgMes').value; if(!m) return msg('Elegí un mes.');
+  var fila={ mes:m+'-01', estado:'pagado', monto:parseFloat($('pgMonto').value)||25,
+             referencia:$('pgRef').value.trim()||null, fecha_pago:new Date().toISOString(),
+             marcado_por:S.user.id };
+  sb.from('suscripciones').upsert(fila,{onConflict:'mes'}).select().single().then(function(r){
+    if(r.error) return msg('Error: '+r.error.message);
+    S.susc = S.susc.filter(function(s){ return s.mes!==fila.mes; });
+    S.susc.unshift(r.data); S.susc.sort(function(a,b){ return a.mes<b.mes?1:-1; });
+    $('pgRef').value='';
+    renderPagos(); evaluarBloqueo();
+    if(S.canEdit) $('lock').classList.remove('show');
+    msg('Pago de '+mesNombre(fila.mes)+' registrado.', true);
+  });
+});
+
+// ---------- TABS ----------
+Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(t){
+  t.addEventListener('click', function(){
+    Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(x){ x.classList.remove('on'); });
+    t.classList.add('on');
+    var v=t.getAttribute('data-tab');
+    $('viewMenu').classList.toggle('hide', v!=='menu');
+    $('viewPagos').classList.toggle('hide', v!=='pagos');
+  });
+});
+
+// ---------- INIT ----------
+sb.auth.getSession().then(function(r){
+  if(r.data && r.data.session) boot();
+  else $('login').classList.remove('hide');
+});
+})();
+</script>
+</body>
+</html>
