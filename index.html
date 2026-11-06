@@ -1818,5 +1818,82 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
   if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', initEvt); } else { initEvt(); }
 })();
 </script>
+
+<!-- ====== MENÚ DINÁMICO ======
+     Lee menu.json y re-renderiza los platos. Si falla (sin red, JSON roto,
+     etc.) el menú escrito en el HTML de arriba queda tal cual: el cliente
+     nunca ve una carta vacía. -->
+<script>
+(function(){
+'use strict';
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function precioHTML(it){
+  var e=Math.floor(it.precio), c=Math.round((it.precio-e)*100);
+  if(it.precio2!=null) return '$'+e+' <small>/ $'+Math.floor(it.precio2)+'</small>';
+  if(it.decimales)     return '$'+e+'<small>,'+String(c).padStart(2,'0')+'</small>';
+  return '$'+e;
+}
+
+function itemHTML(it){
+  var h='<div class="item'+(it.agotado?' agotado':'')+'"><div class="info">';
+  h+='<div class="name">'+esc(it.nombre)+'</div>';
+  if(it.descripcion) h+='<div class="desc">'+esc(it.descripcion)+'</div>';
+  if(it.peso)        h+='<span class="wt">'+esc(it.peso)+'</span>';
+  h+='</div><div class="price">'+precioHTML(it)+'</div></div>';
+  return h;
+}
+
+function contenedor(id){
+  // Comidas: <div class="sec" id="X">. Bebidas: <div class="drk" id="X-w"><div class="sec">
+  var el=document.getElementById(id);
+  if(el && el.classList.contains('sec')) return el;
+  var w=document.getElementById(id+'-w');
+  if(w){ var inner=w.querySelector('.sec'); if(inner) return inner; }
+  return null;
+}
+
+function pintar(sec){
+  var cont=contenedor(sec.id);
+  if(!cont) return false;
+  var visibles=(sec.items||[]).filter(function(i){ return i.visible!==false; });
+  if(!visibles.length) return false;
+
+  var html='', cat=null;
+  visibles.forEach(function(it){
+    var c=it.categoria||'';
+    if(c!==cat){ if(c) html+='<div class="cat">'+esc(c)+'</div>'; cat=c; }
+    html+=itemHTML(it);
+  });
+
+  // Borrar solo platos y subtítulos; conservar .sec-bg y .sec-head
+  Array.prototype.slice.call(cont.querySelectorAll(':scope > .item, :scope > .cat'))
+       .forEach(function(n){ n.parentNode.removeChild(n); });
+  cont.insertAdjacentHTML('beforeend', html);
+  return true;
+}
+
+function animarVisibles(){
+  Array.prototype.forEach.call(document.querySelectorAll('.sec.show, .drk.show .sec'), function(sec){
+    Array.prototype.forEach.call(sec.querySelectorAll('.item'), function(it,i){
+      it.style.animation='itemIn 0.5s cubic-bezier(0.16,1,0.3,1) '+(i*0.06)+'s both';
+    });
+  });
+}
+
+fetch('menu.json?v='+Date.now(), {cache:'no-store'})
+  .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+  .then(function(data){
+    if(!data || !Array.isArray(data.secciones)) throw new Error('formato inválido');
+    var n=0;
+    data.secciones.forEach(function(sec){ if(pintar(sec)) n++; });
+    if(n) animarVisibles();
+    console.log('[menu] '+n+' secciones actualizadas desde menu.json');
+  })
+  .catch(function(e){
+    console.warn('[menu] usando carta estática del HTML:', e.message);
+  });
+})();
+</script>
 </body>
 </html>

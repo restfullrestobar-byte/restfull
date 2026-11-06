@@ -1,0 +1,1164 @@
+{
+ "actualizado": "2026-11-06T23:26:48Z",
+ "secciones": [
+  {
+   "id": "entradas",
+   "nombre": "Entradas Restful",
+   "subtitulo": "Para compartir y disfrutar",
+   "items": [
+    {
+     "nombre": "Tacos a la Sinaloa",
+     "descripcion": "3 Tortillas de maíz, guacamole, pico de gallo, suave birria cocinada por 12 horas acompañado de jugo de birria",
+     "peso": "",
+     "precio": 7.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Nachos Restful",
+     "descripcion": "Nachos de la casa, carne de birria, guacamole, salsa cheddar",
+     "peso": "",
+     "precio": 8.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Nachos Cheese Bacon",
+     "descripcion": "Guacamole, queso cheddar, bacon crocante",
+     "peso": "",
+     "precio": 7.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Tacos al Matambre",
+     "descripcion": "3 Tortillas de maíz, guacamole, pico de gallo, acompañado de jugo de birria",
+     "peso": "",
+     "precio": 8.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Alitas",
+     "descripcion": "Sabores BBQ, Parmesano, Honey Mustard. Incluye papas cheddar con tocino",
+     "peso": "",
+     "precio": 7.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Canastillas de Camarón 🍤",
+     "descripcion": "Canastas doradas de plátano verde con camarones salteados, salsa de la casa y un delicado toque tropical",
+     "peso": "",
+     "precio": 6.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": "combos",
+   "nombre": "Picadita Restful",
+   "subtitulo": "Ideal para picar y compartir",
+   "items": [
+    {
+     "nombre": "Picadita Restful",
+     "descripcion": "Pollo, filete de cerdo, chorizos, papas fritas y costilla BBQ",
+     "peso": "",
+     "precio": 18.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": "capas",
+   "nombre": "Hamburguesas",
+   "subtitulo": "Jugosas y artesanales",
+   "items": [
+    {
+     "nombre": "Hamburguesa Clásica",
+     "descripcion": "Pan parmesano, tocino, mermelada de tocino, salsa Bigmac, queso cheddar y papas cheddar",
+     "peso": "",
+     "precio": 8.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Hamburguesa Matambre",
+     "descripcion": "Pan parmesano, tocino, matambre, cebolla caramelizada, papas cheddar, salsa Bigmac",
+     "peso": "",
+     "precio": 9.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Wrap de Pollo al Grill",
+     "descripcion": "Tortilla de maíz, pollo, lechuga, alioli, salsa parmesano, porción de papas fritas cheddar",
+     "peso": "",
+     "precio": 7.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": "pastas",
+   "nombre": "Pastas",
+   "subtitulo": "Hechas al momento",
+   "items": [
+    {
+     "nombre": "Fettuccine Alfredo",
+     "descripcion": "Pasta alfredo, tocino, jamón de pavo, pollo a la parrilla y pan de ajo",
+     "peso": "",
+     "precio": 10.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Pasta Pesto",
+     "descripcion": "Pasta tagliatelle acompañada de suave salsa pesto con queso parmesano y pan de ajo",
+     "peso": "",
+     "precio": 8.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Pecado Marino",
+     "descripcion": "Fettuccine en salsa cremosa dorada, acompañado de camarones salteados, tomates cherry frescos y hierbas aromáticas",
+     "peso": "",
+     "precio": 12.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": "especialidades",
+   "nombre": "Especialidades Restful",
+   "subtitulo": "Lo mejor de nuestra cocina",
+   "items": [
+    {
+     "nombre": "Matambre a la Napolitana",
+     "descripcion": "Suave corte recubierto en salsa napolitana, queso gratinado holandés, moro tocino, papa chaucha al chimichurri y salsa de queso",
+     "peso": "250g",
+     "precio": 14.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Panceta Crocante Taku Taku",
+     "descripcion": "Crujiente panceta sobre una base de arroz Taku Taku y unas finas chips de yuca frita",
+     "peso": "250g",
+     "precio": 13.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Panceta Dorada",
+     "descripcion": "Panceta de cerdo dorada y crujiente, acompañada de arroz moro y ensalada César. Guarnición a escoger: papa chaucha o papa frita",
+     "peso": "",
+     "precio": 8.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Ribeye Premium",
+     "descripcion": "Exquisito corte premium a la parrilla sazonado con hierbas frescas, acompañado de papa chaucha al chimichurri, salsa de queso y moro con tocino",
+     "peso": "250g",
+     "precio": 16.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Lomo de Asado en Salsa de Champiñones",
+     "descripcion": "Jugoso lomo bañado en salsa de champiñones, acompañado de papa chaucha al chimichurri y moro con tocino",
+     "peso": "250g",
+     "precio": 16.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Cordon Blue",
+     "descripcion": "Relleno de jamón y queso mozzarella, recubierto de una capa de panko crocante. Salsa a escoger: camarón o champiñones. Acompañado de moro de choclo",
+     "peso": "",
+     "precio": 12.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": "tipicos",
+   "nombre": "Típicos",
+   "subtitulo": "Sabores de casa",
+   "items": [
+    {
+     "nombre": "Camarón Estilo Panko",
+     "descripcion": "Camarón apanado crujiente, pico de gallo y patacón",
+     "peso": "",
+     "precio": 8.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Suprema de Pollo",
+     "descripcion": "Pollo al grill acompañado de ensalada César y yuca frita",
+     "peso": "",
+     "precio": 7.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Filete de Cerdo",
+     "descripcion": "Lomo de cerdo al grill acompañado de ensalada César y yuca frita",
+     "peso": "",
+     "precio": 7.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Costilla en Salsa BBQ",
+     "descripcion": "Costilla de cerdo bañada en salsa BBQ acompañada de papas fritas y ensalada César",
+     "peso": "",
+     "precio": 9.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Ensalada César con Pollo 🥗🍗",
+     "descripcion": "Lechuga fresca y crujiente, crutones artesanales, queso parmesano y jugosas tiras de pollo a la parrilla, bañadas en una deliciosa salsa César. El equilibrio perfecto entre frescura y sabor.",
+     "peso": "",
+     "precio": 7.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Porción de Moro Tocino",
+     "descripcion": "",
+     "peso": "",
+     "precio": 3.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Acompañamientos",
+     "visible": true
+    },
+    {
+     "nombre": "Porción de Arroz Moro",
+     "descripcion": "",
+     "peso": "",
+     "precio": 2.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Acompañamientos",
+     "visible": true
+    },
+    {
+     "nombre": "Porción de Arroz",
+     "descripcion": "",
+     "peso": "",
+     "precio": 1.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Acompañamientos",
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": "bebidas",
+   "nombre": "Bebidas",
+   "subtitulo": "Refrescantes",
+   "items": [
+    {
+     "nombre": "Limonada Frutos Rojos",
+     "descripcion": "",
+     "peso": "",
+     "precio": 3.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Limonadas",
+     "visible": true
+    },
+    {
+     "nombre": "Limonada Hierbabuena",
+     "descripcion": "",
+     "peso": "",
+     "precio": 2.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Limonadas",
+     "visible": true
+    },
+    {
+     "nombre": "Limonada Maracuyá",
+     "descripcion": "",
+     "peso": "",
+     "precio": 2.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Limonadas",
+     "visible": true
+    },
+    {
+     "nombre": "Limonada Imperial",
+     "descripcion": "",
+     "peso": "",
+     "precio": 2.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Limonadas",
+     "visible": true
+    },
+    {
+     "nombre": "Mango",
+     "descripcion": "",
+     "peso": "",
+     "precio": 2.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Jugos Naturales",
+     "visible": true
+    },
+    {
+     "nombre": "Piña",
+     "descripcion": "",
+     "peso": "",
+     "precio": 2.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Jugos Naturales",
+     "visible": true
+    },
+    {
+     "nombre": "Maracuyá",
+     "descripcion": "",
+     "peso": "",
+     "precio": 2.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Jugos Naturales",
+     "visible": true
+    },
+    {
+     "nombre": "Cedrón",
+     "descripcion": "",
+     "peso": "",
+     "precio": 1.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Aguas Aromáticas",
+     "visible": true
+    },
+    {
+     "nombre": "Manzanilla",
+     "descripcion": "",
+     "peso": "",
+     "precio": 1.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Aguas Aromáticas",
+     "visible": true
+    },
+    {
+     "nombre": "Horchata",
+     "descripcion": "",
+     "peso": "",
+     "precio": 1.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Aguas Aromáticas",
+     "visible": true
+    },
+    {
+     "nombre": "Jamaica",
+     "descripcion": "",
+     "peso": "",
+     "precio": 1.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Aguas Aromáticas",
+     "visible": true
+    },
+    {
+     "nombre": "Frutos Rojos",
+     "descripcion": "",
+     "peso": "",
+     "precio": 1.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Aguas Aromáticas",
+     "visible": true
+    },
+    {
+     "nombre": "Coca Cola Personal",
+     "descripcion": "",
+     "peso": "",
+     "precio": 1.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Otros",
+     "visible": true
+    },
+    {
+     "nombre": "Agua",
+     "descripcion": "",
+     "peso": "",
+     "precio": 1.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Otros",
+     "visible": true
+    },
+    {
+     "nombre": "Café ☕",
+     "descripcion": "La taza",
+     "peso": "",
+     "precio": 1.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Otros",
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": "cocktails",
+   "nombre": "Cocktails",
+   "subtitulo": "El arte de la coctelería",
+   "items": [
+    {
+     "nombre": "Coctel Restful",
+     "descripcion": "",
+     "peso": "",
+     "precio": 8.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "De Autor",
+     "visible": true
+    },
+    {
+     "nombre": "Sunset Maracuyá",
+     "descripcion": "Maracuyá, ron, hierbabuena, sprite",
+     "peso": "",
+     "precio": 6.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "De Autor",
+     "visible": true
+    },
+    {
+     "nombre": "Blue Restful",
+     "descripcion": "",
+     "peso": "",
+     "precio": 6.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "De Autor",
+     "visible": true
+    },
+    {
+     "nombre": "Coctel Alanna",
+     "descripcion": "",
+     "peso": "",
+     "precio": 6.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "De Autor",
+     "visible": true
+    },
+    {
+     "nombre": "Mojito",
+     "descripcion": "Clásico, maracuyá, frutos rojos",
+     "peso": "",
+     "precio": 6.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Clásicos que Enamoran",
+     "visible": true
+    },
+    {
+     "nombre": "Paloma Mexicana",
+     "descripcion": "",
+     "peso": "",
+     "precio": 5.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Clásicos que Enamoran",
+     "visible": true
+    },
+    {
+     "nombre": "Piña Colada",
+     "descripcion": "",
+     "peso": "",
+     "precio": 6.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Clásicos que Enamoran",
+     "visible": true
+    },
+    {
+     "nombre": "Cuba Libre",
+     "descripcion": "",
+     "peso": "",
+     "precio": 5.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Clásicos que Enamoran",
+     "visible": true
+    },
+    {
+     "nombre": "Margarita",
+     "descripcion": "Clásico, maracuyá, frutos rojos",
+     "peso": "",
+     "precio": 6.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Clásicos que Enamoran",
+     "visible": true
+    },
+    {
+     "nombre": "Margarita Frozen",
+     "descripcion": "",
+     "peso": "",
+     "precio": 6.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Clásicos que Enamoran",
+     "visible": true
+    },
+    {
+     "nombre": "Michelada",
+     "descripcion": "",
+     "peso": "",
+     "precio": 3.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Clásicos que Enamoran",
+     "visible": true
+    },
+    {
+     "nombre": "Tinto de Verano",
+     "descripcion": "",
+     "peso": "",
+     "precio": 6.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Clásicos que Enamoran",
+     "visible": true
+    },
+    {
+     "nombre": "Coco Loco",
+     "descripcion": "",
+     "peso": "",
+     "precio": 10.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Clásicos que Enamoran",
+     "visible": true
+    },
+    {
+     "nombre": "Blue Hawai",
+     "descripcion": "",
+     "peso": "",
+     "precio": 6.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Clásicos que Enamoran",
+     "visible": true
+    },
+    {
+     "nombre": "Moscow Mule",
+     "descripcion": "",
+     "peso": "",
+     "precio": 7.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Explosivos",
+     "visible": true
+    },
+    {
+     "nombre": "Mojito Gran Malo",
+     "descripcion": "",
+     "peso": "",
+     "precio": 7.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Explosivos",
+     "visible": true
+    },
+    {
+     "nombre": "Martini Frozen",
+     "descripcion": "",
+     "peso": "",
+     "precio": 7.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Explosivos",
+     "visible": true
+    },
+    {
+     "nombre": "Orgasmo",
+     "descripcion": "",
+     "peso": "",
+     "precio": 6.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Explosivos",
+     "visible": true
+    },
+    {
+     "nombre": "Destornillador",
+     "descripcion": "",
+     "peso": "",
+     "precio": 5.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Explosivos",
+     "visible": true
+    },
+    {
+     "nombre": "Jägerbomb",
+     "descripcion": "",
+     "peso": "",
+     "precio": 5.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Explosivos",
+     "visible": true
+    },
+    {
+     "nombre": "Veneno de Media Noche",
+     "descripcion": "",
+     "peso": "",
+     "precio": 7.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Explosivos",
+     "visible": true
+    },
+    {
+     "nombre": "Negroni",
+     "descripcion": "",
+     "peso": "",
+     "precio": 7.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Exclusivos de la Carta",
+     "visible": true
+    },
+    {
+     "nombre": "Old Fashioned",
+     "descripcion": "",
+     "peso": "",
+     "precio": 7.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Exclusivos de la Carta",
+     "visible": true
+    },
+    {
+     "nombre": "Americano",
+     "descripcion": "",
+     "peso": "",
+     "precio": 7.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Exclusivos de la Carta",
+     "visible": true
+    },
+    {
+     "nombre": "Manhattan",
+     "descripcion": "",
+     "peso": "",
+     "precio": 7.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Exclusivos de la Carta",
+     "visible": true
+    },
+    {
+     "nombre": "Long Island",
+     "descripcion": "",
+     "peso": "",
+     "precio": 7.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Exclusivos de la Carta",
+     "visible": true
+    },
+    {
+     "nombre": "Jarra de Sangría",
+     "descripcion": "",
+     "peso": "",
+     "precio": 19.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Para Compartir",
+     "visible": true
+    },
+    {
+     "nombre": "Trío de Shots",
+     "descripcion": "",
+     "peso": "",
+     "precio": 6.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Para Compartir",
+     "visible": true
+    },
+    {
+     "nombre": "Gin Tonic",
+     "descripcion": "Clásico, maracuyá, frutos rojos",
+     "peso": "",
+     "precio": 6.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Otro Nivel",
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": "cervezas",
+   "nombre": "Cervezas",
+   "subtitulo": "Para cada momento",
+   "items": [
+    {
+     "nombre": "Modelo",
+     "descripcion": "",
+     "peso": "",
+     "precio": 5.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Heineken",
+     "descripcion": "",
+     "peso": "",
+     "precio": 3.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Corona",
+     "descripcion": "",
+     "peso": "",
+     "precio": 3.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Club Clásica",
+     "descripcion": "",
+     "peso": "",
+     "precio": 2.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Club Platino",
+     "descripcion": "",
+     "peso": "",
+     "precio": 2.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Artesanal Paulaner Rubia",
+     "descripcion": "",
+     "peso": "",
+     "precio": 6.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Artesanal Paulaner Negra",
+     "descripcion": "",
+     "peso": "",
+     "precio": 6.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    }
+   ]
+  },
+  {
+   "id": "licores",
+   "nombre": "Licores",
+   "subtitulo": "Selección premium",
+   "items": [
+    {
+     "nombre": "Tequila Patrón",
+     "descripcion": "",
+     "peso": "",
+     "precio": 130.0,
+     "precio2": null,
+     "decimales": false,
+     "agotado": false,
+     "categoria": "Tequila",
+     "visible": true
+    },
+    {
+     "nombre": "Tequila Gran Malo",
+     "descripcion": "",
+     "peso": "",
+     "precio": 60.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Tequila",
+     "visible": true
+    },
+    {
+     "nombre": "Tequila Azteca",
+     "descripcion": "",
+     "peso": "",
+     "precio": 35.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Tequila",
+     "visible": true
+    },
+    {
+     "nombre": "Tequila Charro",
+     "descripcion": "",
+     "peso": "",
+     "precio": 40.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Tequila",
+     "visible": true
+    },
+    {
+     "nombre": "Jägermeister",
+     "descripcion": "",
+     "peso": "",
+     "precio": 50.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Tequila",
+     "visible": true
+    },
+    {
+     "nombre": "Tocornal Cabernet Sauvignon",
+     "descripcion": "Copa 5 oz: $5,00",
+     "peso": "",
+     "precio": 25.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Vinos",
+     "visible": true
+    },
+    {
+     "nombre": "Aliwen Cabernet Sauvignon",
+     "descripcion": "",
+     "peso": "",
+     "precio": 35.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Vinos",
+     "visible": true
+    },
+    {
+     "nombre": "Norton Reserva Merlot",
+     "descripcion": "",
+     "peso": "",
+     "precio": 50.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Vinos",
+     "visible": true
+    },
+    {
+     "nombre": "Undurraga Reserva Merlot",
+     "descripcion": "",
+     "peso": "",
+     "precio": 25.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Vinos",
+     "visible": true
+    },
+    {
+     "nombre": "Tocornal Sauvignon Blanc",
+     "descripcion": "",
+     "peso": "",
+     "precio": 25.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Vinos",
+     "visible": true
+    },
+    {
+     "nombre": "Royal Salute",
+     "descripcion": "",
+     "peso": "",
+     "precio": 490.0,
+     "precio2": null,
+     "decimales": false,
+     "agotado": false,
+     "categoria": "Whiskey — Premium",
+     "visible": true
+    },
+    {
+     "nombre": "Blue Label",
+     "descripcion": "",
+     "peso": "",
+     "precio": 450.0,
+     "precio2": null,
+     "decimales": false,
+     "agotado": false,
+     "categoria": "Whiskey — Premium",
+     "visible": true
+    },
+    {
+     "nombre": "Macallan 12 Años",
+     "descripcion": "",
+     "peso": "",
+     "precio": 250.0,
+     "precio2": null,
+     "decimales": false,
+     "agotado": false,
+     "categoria": "Whiskey — Premium",
+     "visible": true
+    },
+    {
+     "nombre": "Gold Label",
+     "descripcion": "",
+     "peso": "",
+     "precio": 13.0,
+     "precio2": 140.0,
+     "decimales": false,
+     "agotado": false,
+     "categoria": "Whiskey — Trago / Botella",
+     "visible": true
+    },
+    {
+     "nombre": "Black Label",
+     "descripcion": "",
+     "peso": "",
+     "precio": 11.0,
+     "precio2": 130.0,
+     "decimales": false,
+     "agotado": false,
+     "categoria": "Whiskey — Trago / Botella",
+     "visible": true
+    },
+    {
+     "nombre": "Buchanan's Piña",
+     "descripcion": "",
+     "peso": "",
+     "precio": 12.0,
+     "precio2": 135.0,
+     "decimales": false,
+     "agotado": false,
+     "categoria": "Whiskey — Trago / Botella",
+     "visible": true
+    },
+    {
+     "nombre": "Buchanan's Master",
+     "descripcion": "",
+     "peso": "",
+     "precio": 11.0,
+     "precio2": 115.0,
+     "decimales": false,
+     "agotado": false,
+     "categoria": "Whiskey — Trago / Botella",
+     "visible": true
+    },
+    {
+     "nombre": "Buchanan's Deluxe",
+     "descripcion": "",
+     "peso": "",
+     "precio": 10.0,
+     "precio2": 90.0,
+     "decimales": false,
+     "agotado": false,
+     "categoria": "Whiskey — Trago / Botella",
+     "visible": true
+    },
+    {
+     "nombre": "Old Parr",
+     "descripcion": "",
+     "peso": "",
+     "precio": 8.0,
+     "precio2": 80.0,
+     "decimales": false,
+     "agotado": false,
+     "categoria": "Whiskey — Clásicos",
+     "visible": true
+    },
+    {
+     "nombre": "Black & White",
+     "descripcion": "",
+     "peso": "",
+     "precio": 40.0,
+     "precio2": null,
+     "decimales": false,
+     "agotado": false,
+     "categoria": "Whiskey — Clásicos",
+     "visible": true
+    },
+    {
+     "nombre": "Red Label",
+     "descripcion": "",
+     "peso": "",
+     "precio": 5.0,
+     "precio2": 45.0,
+     "decimales": false,
+     "agotado": false,
+     "categoria": "Whiskey — Clásicos",
+     "visible": true
+    }
+   ]
+  }
+ ]
+}
