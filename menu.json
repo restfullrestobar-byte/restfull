@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-06T23:26:48Z",
+ "actualizado": "2026-11-07T00:22:00Z",
  "secciones": [
   {
    "id": "entradas",
@@ -99,9 +99,20 @@
    "items": [
     {
      "nombre": "Hamburguesa Clásica",
-     "descripcion": "Pan parmesano, tocino, mermelada de tocino, salsa Bigmac, queso cheddar y papas cheddar",
+     "descripcion": "Pan de papa, tocino, mermelada de tocino, salsa Bigmac, queso cheddar y papas cheddar",
      "peso": "",
-     "precio": 8.5,
+     "precio": 7.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Hamburguesa Crispy",
+     "descripcion": "Pan de papa, tocino, pollo crispy, salsa Mac, queso cheddar, cebolla caramelizada",
+     "peso": "",
+     "precio": 7.5,
      "precio2": null,
      "decimales": true,
      "agotado": false,
@@ -112,7 +123,18 @@
      "nombre": "Hamburguesa Matambre",
      "descripcion": "Pan parmesano, tocino, matambre, cebolla caramelizada, papas cheddar, salsa Bigmac",
      "peso": "",
-     "precio": 9.5,
+     "precio": 8.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "",
+     "visible": true
+    },
+    {
+     "nombre": "Hamburguesa Jumbo Smash",
+     "descripcion": "Pan parmesano, tocino, pollo crispy, carne a la parrilla, cebolla caramelizada, salsa Bigmac, huevo frito y papas cheddar",
+     "peso": "",
+     "precio": 10.5,
      "precio2": null,
      "decimales": true,
      "agotado": false,
@@ -236,7 +258,7 @@
      "nombre": "Cordon Blue",
      "descripcion": "Relleno de jamón y queso mozzarella, recubierto de una capa de panko crocante. Salsa a escoger: camarón o champiñones. Acompañado de moro de choclo",
      "peso": "",
-     "precio": 12.0,
+     "precio": 13.5,
      "precio2": null,
      "decimales": true,
      "agotado": false,
@@ -383,6 +405,17 @@
      "descripcion": "",
      "peso": "",
      "precio": 2.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Limonadas",
+     "visible": true
+    },
+    {
+     "nombre": "Limonada Maracuyá con Hierbabuena",
+     "descripcion": "",
+     "peso": "",
+     "precio": 3.0,
      "precio2": null,
      "decimales": true,
      "agotado": false,
@@ -562,10 +595,21 @@
      "visible": true
     },
     {
-     "nombre": "Mojito",
-     "descripcion": "Clásico, maracuyá, frutos rojos",
+     "nombre": "Mojito Clásico",
+     "descripcion": "",
      "peso": "",
      "precio": 6.0,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Clásicos que Enamoran",
+     "visible": true
+    },
+    {
+     "nombre": "Mojito Frutos Rojos o Maracuyá",
+     "descripcion": "",
+     "peso": "",
+     "precio": 7.0,
      "precio2": null,
      "decimales": true,
      "agotado": false,
@@ -632,6 +676,17 @@
      "descripcion": "",
      "peso": "",
      "precio": 3.5,
+     "precio2": null,
+     "decimales": true,
+     "agotado": false,
+     "categoria": "Clásicos que Enamoran",
+     "visible": true
+    },
+    {
+     "nombre": "Michelada de Maracuyá",
+     "descripcion": "",
+     "peso": "",
+     "precio": 4.0,
      "precio2": null,
      "decimales": true,
      "agotado": false,
@@ -731,17 +786,6 @@
      "descripcion": "",
      "peso": "",
      "precio": 5.0,
-     "precio2": null,
-     "decimales": true,
-     "agotado": false,
-     "categoria": "Explosivos",
-     "visible": true
-    },
-    {
-     "nombre": "Veneno de Media Noche",
-     "descripcion": "",
-     "peso": "",
-     "precio": 7.0,
      "precio2": null,
      "decimales": true,
      "agotado": false,
