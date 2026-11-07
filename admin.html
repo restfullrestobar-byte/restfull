@@ -130,7 +130,7 @@ function msg(t,ok){
   clearTimeout(m._t); m._t=setTimeout(function(){m.className='msg';},5000);
 }
 
-// Apps Script guarda el token de GitHub del lado del servidor: acá solo viaja la contraseña.
+// Todo pasa por Apps Script: acá solo viaja la contraseña.
 // Content-Type text/plain evita el preflight de CORS.
 function api(accion,extra){
   var carga={action:accion,password:S.tok};
@@ -169,10 +169,10 @@ function abrirApp(){ $('login').classList.add('hide'); $('app').classList.remove
 
 // ---------- CARGA ----------
 function cargar(){
-  return api('menuEstado').then(function(r){
-    if(!r.ok){ errLogin(r.error||'No se pudo entrar.'); return false; }
-    S.data=r.menu; S.sha=r.sha; S.hasta=r.hasta;
-    if(!S.data || !S.data.secciones || !S.data.secciones.length){ errLogin('El menú está vacío.'); return false; }
+  return api('getMenu').then(function(r){
+    if(!r.ok){ errLogin(r.error||'No se pudo cargar el menú.'); return false; }
+    if(!r.secciones || !r.secciones.length){ errLogin('La hoja Menu está vacía.'); return false; }
+    S.data={secciones:r.secciones};
     if(!S.sec) S.sec=S.data.secciones[0].id;
     return true;
   }).catch(function(e){ errLogin('Sin conexión: '+e.message); return false; });
@@ -294,7 +294,7 @@ $('btnReset').addEventListener('click',function(){
 // ---------- PUBLICAR ----------
 $('btnSave').addEventListener('click',function(){
   if(!S.dirty) return;
-  var b=$('btnSave'); b.disabled=true; b.textContent='Publicando…';
+  var b=$('btnSave'); b.disabled=true; b.textContent='Guardando…';
 
   var limpio={secciones:S.data.secciones.map(function(s){
     return {id:s.id,nombre:s.nombre,subtitulo:s.subtitulo||'',
@@ -307,16 +307,16 @@ $('btnSave').addEventListener('click',function(){
             })};
   })};
 
-  api('publicarMenu',{menu:JSON.stringify(limpio),sha:S.sha}).then(function(r){
+  api('guardarMenu',{menu:JSON.stringify(limpio)}).then(function(r){
     b.disabled=false; b.textContent='Publicar';
     if(!r.ok){
       if(r.vencido) return bloquear(r.error);
-      return msg(r.error||'No se pudo publicar.');
+      return msg(r.error||'No se pudo guardar.');
     }
-    S.sha=r.sha; S.dirty=false;
+    S.dirty=false;
     S.data.secciones.forEach(function(s){ s.items.forEach(function(i){ delete i._e; }); });
     render();
-    msg('✅ Publicado ('+r.platos+' platos). El menú se actualiza en menos de un minuto.',true);
+    msg('✅ Guardado ('+r.platos+' platos). Ya se ve en el menú.',true);
   }).catch(function(e){
     b.disabled=false; b.textContent='Publicar';
     msg('Sin conexión: '+e.message);

@@ -1820,9 +1820,9 @@ footer p{font-size:0.65rem;color:rgba(224,208,192,0.18);font-family:Arial,sans-s
 </script>
 
 <!-- ====== MENÚ DINÁMICO ======
-     Lee menu.json y re-renderiza los platos. Si falla (sin red, JSON roto,
-     etc.) el menú escrito en el HTML de arriba queda tal cual: el cliente
-     nunca ve una carta vacía. -->
+     Trae el menú del servidor (Apps Script -> hoja Menu). Si falla, usa lo
+     guardado en el navegador; si tampoco hay, queda la carta escrita en el
+     HTML de arriba. El cliente nunca ve una carta vacía. -->
 <script>
 (function(){
 'use strict';
@@ -1881,17 +1881,35 @@ function animarVisibles(){
   });
 }
 
-fetch('menu.json?v='+Date.now(), {cache:'no-store'})
+var API='https://script.google.com/macros/s/AKfycbxXrmUzzWOQFHEO7ST509Xgu5-6vv3m4qt81cPMnlWMygk7jAKxXEB9anaSeoqk1TGj/exec';
+var CACHE='rf_menu_cache';
+
+function aplicar(data, origen){
+  if(!data || !Array.isArray(data.secciones) || !data.secciones.length) return 0;
+  var n=0;
+  data.secciones.forEach(function(sec){ if(pintar(sec)) n++; });
+  if(n) animarVisibles();
+  console.log('[menu] '+n+' secciones desde '+origen);
+  return n;
+}
+
+// 1) Pintar al instante lo último que vimos, para no esperar al servidor
+try{
+  var cache=localStorage.getItem(CACHE);
+  if(cache) aplicar(JSON.parse(cache), 'cache');
+}catch(e){}
+
+// 2) Traer la versión fresca. Si falla, queda lo del cache (o la carta del HTML).
+fetch(API+'?action=getMenu&t='+Date.now(), {cache:'no-store'})
   .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
   .then(function(data){
-    if(!data || !Array.isArray(data.secciones)) throw new Error('formato inválido');
-    var n=0;
-    data.secciones.forEach(function(sec){ if(pintar(sec)) n++; });
-    if(n) animarVisibles();
-    console.log('[menu] '+n+' secciones actualizadas desde menu.json');
+    if(!data || !data.ok) throw new Error((data&&data.error)||'respuesta inválida');
+    if(aplicar(data,'servidor')){
+      try{ localStorage.setItem(CACHE, JSON.stringify({secciones:data.secciones})); }catch(e){}
+    }
   })
   .catch(function(e){
-    console.warn('[menu] usando carta estática del HTML:', e.message);
+    console.warn('[menu] no se pudo actualizar, queda la carta guardada:', e.message);
   });
 })();
 </script>
