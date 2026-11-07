@@ -82,10 +82,10 @@ header .spacer{flex:1;}
     <h1>RESTFUL</h1>
     <div class="sub">Panel del menú</div>
     <div class="msg msg-err" id="loginErr"></div>
-    <label>Clave de acceso</label>
-    <input type="password" id="tok" placeholder="github_pat_..." autocomplete="off">
+    <label>Contraseña</label>
+    <input type="password" id="tok" placeholder="••••••••" autocomplete="current-password">
     <button class="btn btn-gold" id="btnIn" style="width:100%;margin-top:14px;">Entrar</button>
-    <p class="help">Pegá la clave que te pasó Bryan. Queda guardada en este dispositivo,
+    <p class="help">Escribí la contraseña del mes. Queda guardada en este dispositivo,
     no hace falta escribirla de nuevo.</p>
   </div>
 </div>
@@ -116,24 +116,12 @@ header .spacer{flex:1;}
 <script>
 (function(){
 'use strict';
-var REPO='restfullrestobar-byte/restfull', FILE='menu.json', BRANCH='main';
-var API='https://api.github.com/repos/'+REPO+'/contents/'+FILE;
-var LS='rf_token';
+var API='https://script.google.com/macros/s/AKfycbxXrmUzzWOQFHEO7ST509Xgu5-6vv3m4qt81cPMnlWMygk7jAKxXEB9anaSeoqk1TGj/exec';
+var LS='rf_pass';
 
 var S={tok:null,data:null,sha:null,sec:null,dirty:false};
 var $=function(i){return document.getElementById(i);};
 
-// --- base64 que respeta acentos ---
-function b64enc(str){
-  var bytes=new TextEncoder().encode(str), bin='';
-  for(var i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]);
-  return btoa(bin);
-}
-function b64dec(b64){
-  var bin=atob(b64.replace(/\s/g,'')), bytes=new Uint8Array(bin.length);
-  for(var i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
-  return new TextDecoder('utf-8').decode(bytes);
-}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function money(v){return (Math.round(v*100)/100).toFixed(2);}
 
@@ -142,15 +130,18 @@ function msg(t,ok){
   clearTimeout(m._t); m._t=setTimeout(function(){m.className='msg';},5000);
 }
 
-function gh(method,body){
-  return fetch(API+(method==='GET'?'?ref='+BRANCH:''),{
-    method:method,
-    headers:{'Authorization':'Bearer '+S.tok,'Accept':'application/vnd.github+json',
-             'X-GitHub-Api-Version':'2022-11-28'},
-    body:body?JSON.stringify(body):undefined
-  }).then(function(r){
-    return r.json().then(function(j){ return {ok:r.ok,status:r.status,body:j}; });
-  });
+// Apps Script guarda el token de GitHub del lado del servidor: acá solo viaja la contraseña.
+// Content-Type text/plain evita el preflight de CORS.
+function api(accion,extra){
+  var carga={action:accion,password:S.tok};
+  if(extra) for(var k in extra) carga[k]=extra[k];
+  return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+                    body:JSON.stringify(carga),redirect:'follow'})
+    .then(function(r){ return r.text(); })
+    .then(function(t){
+      try{ return JSON.parse(t); }
+      catch(e){ throw new Error('Respuesta inesperada del servidor'); }
+    });
 }
 
 // ---------- LOGIN ----------
@@ -159,7 +150,7 @@ $('tok').addEventListener('keydown',function(e){ if(e.key==='Enter') entrar(); }
 
 function entrar(){
   var t=$('tok').value.trim();
-  if(!t) return errLogin('Pegá la clave que te pasaron.');
+  if(!t) return errLogin('Escribí la contraseña.');
   S.tok=t; $('btnIn').disabled=true; $('btnIn').textContent='Verificando…';
   cargar().then(function(okey){
     $('btnIn').disabled=false; $('btnIn').textContent='Entrar';
@@ -178,18 +169,13 @@ function abrirApp(){ $('login').classList.add('hide'); $('app').classList.remove
 
 // ---------- CARGA ----------
 function cargar(){
-  return gh('GET').then(function(r){
-    if(r.status===401) { errLogin('Clave inválida o vencida. Pedile una nueva a Bryan.'); return false; }
-    if(r.status===404) { errLogin('No se encontró el menú en el repositorio.'); return false; }
-    if(!r.ok)          { errLogin('Error de GitHub ('+r.status+'): '+(r.body.message||'')); return false; }
-    try{
-      S.data=JSON.parse(b64dec(r.body.content));
-      S.sha=r.body.sha;
-    }catch(e){ errLogin('El archivo del menú está dañado: '+e.message); return false; }
-    if(!S.data.secciones || !S.data.secciones.length){ errLogin('El menú está vacío.'); return false; }
+  return api('menuEstado').then(function(r){
+    if(!r.ok){ errLogin(r.error||'No se pudo entrar.'); return false; }
+    S.data=r.menu; S.sha=r.sha; S.hasta=r.hasta;
+    if(!S.data || !S.data.secciones || !S.data.secciones.length){ errLogin('El menú está vacío.'); return false; }
     if(!S.sec) S.sec=S.data.secciones[0].id;
     return true;
-  }).catch(function(e){ errLogin('Sin conexión con GitHub: '+e.message); return false; });
+  }).catch(function(e){ errLogin('Sin conexión: '+e.message); return false; });
 }
 
 function secActual(){
@@ -310,29 +296,27 @@ $('btnSave').addEventListener('click',function(){
   if(!S.dirty) return;
   var b=$('btnSave'); b.disabled=true; b.textContent='Publicando…';
 
-  var limpio={actualizado:new Date().toISOString().replace(/\.\d+Z$/,'Z'),
-              secciones:S.data.secciones.map(function(s){
+  var limpio={secciones:S.data.secciones.map(function(s){
     return {id:s.id,nombre:s.nombre,subtitulo:s.subtitulo||'',
             items:s.items.map(function(i){
+              var p2=(i.precio2===''||i.precio2==null||isNaN(i.precio2))?null:Number(i.precio2);
               return {nombre:i.nombre,descripcion:i.descripcion||'',peso:i.peso||'',
-                      precio:i.precio,precio2:(i.precio2===''||isNaN(i.precio2))?null:i.precio2,
+                      precio:Number(i.precio),precio2:p2,
                       decimales:i.decimales!==false,agotado:!!i.agotado,
                       visible:i.visible!==false,categoria:i.categoria||''};
             })};
   })};
 
-  gh('PUT',{message:'Actualizar menu desde el panel',
-            content:b64enc(JSON.stringify(limpio,null,1)),
-            sha:S.sha, branch:BRANCH}).then(function(r){
+  api('publicarMenu',{menu:JSON.stringify(limpio),sha:S.sha}).then(function(r){
     b.disabled=false; b.textContent='Publicar';
-    if(r.status===401) return bloquear('Tu clave venció. Pedile una nueva a Bryan.');
-    if(r.status===403) return bloquear('Tu clave no tiene permiso para editar. Contactá a Bryan.');
-    if(r.status===409){ msg('Alguien más editó el menú. Recargando…'); return cargar().then(function(){S.dirty=false;render();}); }
-    if(!r.ok) return msg('No se pudo publicar: '+(r.body.message||r.status));
-    S.sha=r.body.content.sha; S.dirty=false;
+    if(!r.ok){
+      if(r.vencido) return bloquear(r.error);
+      return msg(r.error||'No se pudo publicar.');
+    }
+    S.sha=r.sha; S.dirty=false;
     S.data.secciones.forEach(function(s){ s.items.forEach(function(i){ delete i._e; }); });
     render();
-    msg('✅ Publicado. El menú se actualiza en menos de un minuto.',true);
+    msg('✅ Publicado ('+r.platos+' platos). El menú se actualiza en menos de un minuto.',true);
   }).catch(function(e){
     b.disabled=false; b.textContent='Publicar';
     msg('Sin conexión: '+e.message);
@@ -341,7 +325,7 @@ $('btnSave').addEventListener('click',function(){
 
 function bloquear(t){
   $('lock').classList.add('show'); $('lockTxt').textContent=t;
-  $('btnSave').disabled=true;
+  $('btnSave').disabled=true; $('btnAdd').disabled=true;
   window.scrollTo(0,0);
 }
 
